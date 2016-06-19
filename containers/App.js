@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { selectReddit, fetchPostsIfNeeded, invalidateReddit } from '../actions'
+import { selectReddit, fetchPostsIfNeeded, invalidateReddit, fetchNets, selectNetwork } from '../actions'
 import Picker from '../components/Picker'
 import Posts from '../components/Posts'
 
@@ -10,11 +10,14 @@ class App extends Component {
     super(props)
     this.handleChange = this.handleChange.bind(this)
     this.handleRefreshClick = this.handleRefreshClick.bind(this)
+    this.handleNetChange = this.handleNetChange.bind(this)
   }
 
   componentDidMount() {
-    const { dispatch, selectedReddit } = this.props
+    console.log("mounted")
+    const { dispatch, selectedReddit, nets, selectedNetwork } = this.props
     dispatch(fetchPostsIfNeeded(selectedReddit))
+    dispatch(fetchNets())
   }
 
   componentWillReceiveProps(nextProps) {
@@ -22,10 +25,20 @@ class App extends Component {
       const { dispatch, selectedReddit } = nextProps
       dispatch(fetchPostsIfNeeded(selectedReddit))
     }
+
+    if (nextProps.selectedNetwork !== this.props.selectedNetwork) {
+      const {dispatch, selectedNetwork} = nextProps
+      this.handleNetChange(nextProps.selectedNetwork)
+    }
   }
 
   handleChange(nextReddit) {
     this.props.dispatch(selectReddit(nextReddit))
+  }
+
+  handleNetChange(nextNet){
+    console.log("on change", nextNet)
+    this.props.dispatch(selectNetwork(nextNet));
   }
 
   handleRefreshClick(e) {
@@ -37,13 +50,21 @@ class App extends Component {
   }
 
   render() {
-    const { selectedReddit, posts, isFetching, lastUpdated } = this.props
+    const { selectedReddit, posts, isFetching, lastUpdated, nets, selectedNetwork } = this.props
     const isEmpty = posts.length === 0
     return (
       <div>
+
+
+        <Picker value={selectedNetwork}
+                onChange={this.handleNetChange}
+                options={nets.nets} />        
+        <hr/>
+
         <Picker value={selectedReddit}
                 onChange={this.handleChange}
                 options={[ 'reactjs', 'frontend' ]} />
+
         <p>
           {lastUpdated &&
             <span>
@@ -71,14 +92,16 @@ class App extends Component {
 
 App.propTypes = {
   selectedReddit: PropTypes.string.isRequired,
+  selectedNetwork: PropTypes.string.isRequired,
   posts: PropTypes.array.isRequired,
+  nets: PropTypes.object.isRequired,
   isFetching: PropTypes.bool.isRequired,
   lastUpdated: PropTypes.number,
   dispatch: PropTypes.func.isRequired
 }
 
 function mapStateToProps(state) {
-  const { selectedReddit, postsByReddit } = state
+  const { selectedReddit, postsByReddit, nets, selectedNetwork } = state
   const {
     isFetching,
     lastUpdated,
@@ -90,7 +113,9 @@ function mapStateToProps(state) {
 
   return {
     selectedReddit,
+    selectedNetwork,
     posts,
+    nets,
     isFetching,
     lastUpdated
   }

@@ -1,8 +1,11 @@
 import fetch from 'isomorphic-fetch'
 
 export const REQUEST_POSTS = 'REQUEST_POSTS'
+export const REQUEST_NETS = 'REQUEST_NETS'
 export const RECEIVE_POSTS = 'RECEIVE_POSTS'
+export const RECEIVE_NETS = 'RECEIVE_NETS'
 export const SELECT_REDDIT = 'SELECT_REDDIT'
+export const SELECT_NETWORK = 'SELECT_NETWORK'
 export const INVALIDATE_REDDIT = 'INVALIDATE_REDDIT'
 
 export function selectReddit(reddit) {
@@ -11,6 +14,14 @@ export function selectReddit(reddit) {
     reddit
   }
 }
+
+export function selectNetwork(net){
+  return{
+    type: SELECT_NETWORK,
+    selectedNetwork: net
+  }
+}
+
 
 export function invalidateReddit(reddit) {
   return {
@@ -26,6 +37,13 @@ function requestPosts(reddit) {
   }
 }
 
+function requestNets() {
+  return {
+    type: REQUEST_NETS
+  }
+}
+
+
 function receivePosts(reddit, json) {
   return {
     type: RECEIVE_POSTS,
@@ -34,6 +52,15 @@ function receivePosts(reddit, json) {
     receivedAt: Date.now()
   }
 }
+
+function receiveNets(data) {
+  return {
+    type: RECEIVE_NETS,
+    nets: data.map(ob => ob.net),
+    selectedNetwork: data[0].net
+  }
+}
+
 
 function fetchPosts(reddit) {
   return dispatch => {
@@ -44,6 +71,17 @@ function fetchPosts(reddit) {
       .then(json => dispatch(receivePosts(reddit, json)))
   }
 }
+
+export function fetchNets() {
+  return dispatch => {
+    dispatch(requestNets)
+    console.log("getting networks!")
+    return fetch('http://rockthecatzva.com/slim-tracker/api/getnets')
+      .then(response => response.json())
+      .then(json => dispatch(receiveNets(json)))
+  }
+}
+
 
 function shouldFetchPosts(state, reddit) {
   const posts = state.postsByReddit[reddit]

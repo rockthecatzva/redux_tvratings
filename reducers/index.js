@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux'
 import {
   SELECT_REDDIT, INVALIDATE_REDDIT,
-  REQUEST_POSTS, RECEIVE_POSTS
+  REQUEST_POSTS, RECEIVE_POSTS, RECEIVE_NETS, SELECT_NETWORK
 } from '../actions'
 
 function selectedReddit(state = 'reactjs', action) {
@@ -12,6 +12,17 @@ function selectedReddit(state = 'reactjs', action) {
       return state
   }
 }
+
+function selectedNetwork(state='init1', action){
+  switch (action.type){
+    case RECEIVE_NETS:
+    case SELECT_NETWORK:
+      return action.selectedNetwork
+    default:
+      return state
+  }
+}
+
 
 function posts(state = {
   isFetching: false,
@@ -53,9 +64,24 @@ function postsByReddit(state = { }, action) {
   }
 }
 
+function nets(state={nets:[], selectedNetwork:'init2'}, action){
+  switch(action.type){
+    case RECEIVE_NETS:
+      console.log("reducer - ", action)
+      return Object.assign({}, state, {
+        nets: action.nets,
+        selectedNetwork: selectedNetwork(state[action.selectedNetwork], action)
+      })
+    default:
+      return state;
+  }
+}
+
 const rootReducer = combineReducers({
   postsByReddit,
-  selectedReddit
+  selectedReddit,
+  selectedNetwork,
+  nets
 })
 
 export default rootReducer
