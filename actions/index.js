@@ -2,11 +2,20 @@ import fetch from 'isomorphic-fetch'
 
 export const REQUEST_POSTS = 'REQUEST_POSTS'
 export const REQUEST_NETS = 'REQUEST_NETS'
+export const REQUEST_WEEKS = 'REQUEST_WEEKS'
+export const REQUEST_DATA = 'REQUEST_DATA'
+
 export const RECEIVE_POSTS = 'RECEIVE_POSTS'
 export const RECEIVE_NETS = 'RECEIVE_NETS'
+export const RECEIVE_WEEKS = 'RECEIVE_WEEKS'
+export const RECEIVE_DATA = 'RECEIVE_DATA'
+
 export const SELECT_REDDIT = 'SELECT_REDDIT'
 export const SELECT_NETWORK = 'SELECT_NETWORK'
+export const SELECT_WEEK = 'SELECT_WEEK'
+
 export const INVALIDATE_REDDIT = 'INVALIDATE_REDDIT'
+
 
 export function selectReddit(reddit) {
   return {
@@ -19,6 +28,13 @@ export function selectNetwork(net){
   return{
     type: SELECT_NETWORK,
     selectedNetwork: net
+  }
+}
+
+export function selectWeek(wk){
+  return {
+    type: SELECT_WEEK,
+    selectedWeek: wk
   }
 }
 
@@ -37,12 +53,20 @@ function requestPosts(reddit) {
   }
 }
 
+/*
 function requestNets() {
   return {
     type: REQUEST_NETS
   }
 }
 
+function requestWeeks(){
+  return {
+    type: REQUEST_WEEKS
+  }
+}
+
+*/
 
 function receivePosts(reddit, json) {
   return {
@@ -61,6 +85,17 @@ function receiveNets(data) {
   }
 }
 
+function receiveWeeks(data){
+  return{
+    type: RECEIVE_WEEKS,
+    weeks: data.map(ob=> ob.date_time),
+    selectedWeek: data[0].date_time
+  }
+}
+
+
+
+
 
 function fetchPosts(reddit) {
   return dispatch => {
@@ -74,13 +109,43 @@ function fetchPosts(reddit) {
 
 export function fetchNets() {
   return dispatch => {
-    dispatch(requestNets)
-    console.log("getting networks!")
+   // dispatch(requestNets)
     return fetch('http://rockthecatzva.com/slim-tracker/api/getnets')
       .then(response => response.json())
       .then(json => dispatch(receiveNets(json)))
   }
 }
+
+export function fetchWeeks() {
+  return dispatch => {
+    //dispatch(requestWeeks)
+    return fetch('http://rockthecatzva.com/slim-tracker/api/getweeks')
+      .then(response => response.json())
+      .then(json => dispatch(receiveWeeks(json)))
+  }
+}
+
+
+
+
+export function fetchAPIData(url, treeparent, obmap){
+  return dispatch => {
+    //fetch url data
+    return fetch(url)
+      .then(response => response.json())
+      .then(json => dispatch(receiveAPIData(treeparent, obmap, json)))
+    //then hit the callback
+  }
+}
+
+function receiveAPIData(treeparent, obmap, indata){
+  return{
+    type: RECEIVE_DATA,
+    treeparent,
+    data: indata.map(ob=>obmap.map(obm=>ob[obm]))
+  }
+}
+
 
 
 function shouldFetchPosts(state, reddit) {
@@ -101,3 +166,4 @@ export function fetchPostsIfNeeded(reddit) {
     }
   }
 }
+
