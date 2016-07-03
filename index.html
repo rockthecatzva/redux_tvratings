@@ -2,6 +2,31 @@
 <html>
   <head>
     <title>Redux async example</title>
+    <style>
+			/* tell the SVG path to be a thin blue line without any area fill */
+			path {
+				stroke: steelblue;
+				stroke-width: 1;
+				fill: none;
+			}
+			
+			.axis {
+			  shape-rendering: crispEdges;
+			}
+			.x.axis line {
+			  stroke: lightgrey;
+			}
+			.x.axis .minor {
+			  stroke-opacity: .5;
+			}
+			.x.axis path {
+			 stroke: black; 
+			}
+			.y.axis line, .y.axis path {
+			  fill: none;
+			  stroke: #000;
+			}
+		</style>
   </head>
   <body>
     <div id="root">

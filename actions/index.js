@@ -53,20 +53,6 @@ function requestPosts(reddit) {
   }
 }
 
-/*
-function requestNets() {
-  return {
-    type: REQUEST_NETS
-  }
-}
-
-function requestWeeks(){
-  return {
-    type: REQUEST_WEEKS
-  }
-}
-
-*/
 
 function receivePosts(reddit, json) {
   return {
@@ -128,21 +114,22 @@ export function fetchWeeks() {
 
 
 
-export function fetchAPIData(url, treeparent, obmap){
+export function fetchAPIData(url, treeparent){
   return dispatch => {
     //fetch url data
     return fetch(url)
       .then(response => response.json())
-      .then(json => dispatch(receiveAPIData(treeparent, obmap, json)))
+      .then(json => dispatch(receiveAPIData(treeparent, json)))
     //then hit the callback
   }
 }
 
-function receiveAPIData(treeparent, obmap, indata){
+function receiveAPIData(treeparent, indata){
+  console.log(indata)
   return{
     type: RECEIVE_DATA,
     treeparent,
-    data: indata.map(ob=>obmap.map(obm=>ob[obm]))
+    data: indata//.map(indataob=> indata[indataob])
   }
 }
 

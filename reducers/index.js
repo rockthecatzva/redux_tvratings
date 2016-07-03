@@ -33,7 +33,7 @@ function selectedWeek(state='def1', action){
   }
 }
 
-function ratings(state={}, action){
+function ratings(state={'Week1-P2-L7D-IMP': {'rating_avg': 7}, 'Week6-P2-L7D-IMP': {'rating_avg': 7}}, action){
   switch(action.type){
     case RECEIVE_DATA:
       return Object.assign({}, state, {
