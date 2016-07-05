@@ -71,9 +71,9 @@ class App extends Component {
     e.preventDefault()
     const{dispatch} = this.props
     dispatch(fetchAPIData('http://rockthecatzva.com/slim-tracker/api/getweeklyratings/?net%5B%5D='+this.props.selectedNetwork+'&metric=aa&stream%5B%5D=lsd&demo%5B%5D=p55&starttime=2014-12-22&weeks=7', 'Weekly7-P55-LSD'))
-    dispatch(fetchAPIData('http://rockthecatzva.com/slim-tracker/api/getweeklyratings/?net%5B%5D=FAKENET&metric=aa&stream%5B%5D=lsd&demo%5B%5D=p2_17&starttime=2014-12-22&weeks=7', 'Weekly7-P2_17-LSD'))
-    dispatch(fetchAPIData('http://localhost:8888/tvgrid-redux/api/getaverage?net=FAKENET&metric=imp&demo=p2&starttime=2014-12-22&stream=l7d&weeks=1', 'Week1-P2-L7D-IMP'))
-    dispatch(fetchAPIData('http://localhost:8888/tvgrid-redux/api/getaverage?net=FAKENET&metric=imp&demo=p2&starttime=2014-11-03&stream=l7d&weeks=6', 'Week6-P2-L7D-IMP'))
+    dispatch(fetchAPIData('http://rockthecatzva.com/slim-tracker/api/getweeklyratings/?net%5B%5D='+this.props.selectedNetwork+'&metric=aa&stream%5B%5D=lsd&demo%5B%5D=p2_17&starttime=2014-12-22&weeks=7', 'Weekly7-P2_17-LSD'))
+    dispatch(fetchAPIData('http://localhost:8888/tvgrid-redux/api/getaverage?net='+this.props.selectedNetwork+'&metric=imp&demo=p2&starttime=2014-12-22&stream=l7d&weeks=1', 'Week1-P2-L7D-IMP'))
+    dispatch(fetchAPIData('http://localhost:8888/tvgrid-redux/api/getaverage?net='+this.props.selectedNetwork+'&metric=imp&demo=p2&starttime=2014-11-03&stream=l7d&weeks=6', 'Week6-P2-L7D-IMP'))
   }
 
   render() {
