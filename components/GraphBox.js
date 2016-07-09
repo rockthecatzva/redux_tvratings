@@ -39,41 +39,58 @@ export default class GraphBox extends Component {
           return xlabels[i];
         })
       // Add the x-axis.
-      el.append("svg:g")
+      el.append("g")
       .attr("class", "x axis")
       .attr("transform", "translate(30,"+(this.props.height-20)+")")
       .call(xAxis);
 
       var yAxisLeft = d3.axisLeft(y);
-      el.append("svg:g")
+      el.append("g")
       .attr("class", "y axis")
       .attr("transform", "translate(30,20)")
       .call(yAxisLeft);
 
 
-      el.selectAll("dot")
-      .data(data.set1)
-      .enter().append("circle")
+      console.log("data set", data.set1)
+
+      function ratings(d){
+        console.log(d.rating_avg)
+        return parseInt(d.rating_avg)
+      }
+
+      var d= el.selectAll("circle").data(data.set1);      
+
+      d.enter().append("circle")
       .attr("transform", "translate(30,20)")
       .attr("r", 3.5)
-      .attr("cx", function(d, i) { return x(i); })
-      .attr("cy", function(d) { return y(d.rating_avg); })
-      .text(function(d) { return d.rating_avg; });
+      .merge(d)//ENTER AND UPDATE
+        .attr("cx", function(d, i) { 
+        console.log(d, i, x(i))
+        return x(i); })
+        .attr("cy", function(d) { 
+        console.log("BEER", d);
+        return y(d.rating_avg); });
 
 
+      function t(){
+        console.log("REMOVING");
+      }
 
-      el.append("path")
-      .attr("class", "line")
-      .attr("transform", "translate(30,20)")
-      .attr("d", line(data.set1)); 
+      d.exit().call(t).remove();
+
+
+      var graph =  el.append("svg:path").data([data.set1]);
+
+      graph.attr("d", line)
+      
+      ///.attr("transform", "translate(30,20)")
+      //
     }
 
     componentWillReceiveProps(nextprop){
-
       if(nextprop.set1 !== this.props.set1){
         this.updateData(nextprop);
       }
-
 
     }
 
