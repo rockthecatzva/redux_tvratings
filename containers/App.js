@@ -70,16 +70,16 @@ class App extends Component {
   handleSubmitClick(e){
     e.preventDefault()
     const{dispatch} = this.props
-    dispatch(fetchAPIData('http://rockthecatzva.com/slim-tracker/api/getweeklyratings/?net%5B%5D='+this.props.selectedNetwork+'&metric=aa&stream%5B%5D=lsd&demo%5B%5D=p55&starttime=2014-12-22&weeks=7', 'Weekly7-P55-LSD'))
-    dispatch(fetchAPIData('http://rockthecatzva.com/slim-tracker/api/getweeklyratings/?net%5B%5D='+this.props.selectedNetwork+'&metric=aa&stream%5B%5D=lsd&demo%5B%5D=p2_17&starttime=2014-12-22&weeks=7', 'Weekly7-P2_17-LSD'))
-    dispatch(fetchAPIData('http://localhost:8888/tvgrid-redux/api/getaverage?net='+this.props.selectedNetwork+'&metric=imp&demo=p2&starttime=2014-12-22&stream=l7d&weeks=1', 'Week1-P2-L7D-IMP'))
-    dispatch(fetchAPIData('http://localhost:8888/tvgrid-redux/api/getaverage?net='+this.props.selectedNetwork+'&metric=imp&demo=p2&starttime=2014-11-03&stream=l7d&weeks=6', 'Week6-P2-L7D-IMP'))
+    dispatch(fetchAPIData('http://rockthecatzva.com/slim-tracker/api/getweeklyratings/?net%5B%5D='+this.props.selectedNetwork+'&metric=aa&stream%5B%5D=lsd&demo%5B%5D=p55&starttime='+this.props.selectedWeek+'&weeks=7', 'Weekly7-P55-LSD'))
+    dispatch(fetchAPIData('http://rockthecatzva.com/slim-tracker/api/getweeklyratings/?net%5B%5D='+this.props.selectedNetwork+'&metric=aa&stream%5B%5D=lsd&demo%5B%5D=p2_17&starttime='+this.props.selectedWeek+'&weeks=7', 'Weekly7-P2_17-LSD'))
+    dispatch(fetchAPIData('http://localhost:8888/tvgrid-redux/api/getaverage?net='+this.props.selectedNetwork+'&metric=imp&demo=p2&starttime='+this.props.selectedWeek+'&stream=l7d&weeks=1', 'Week1-P2-L7D-IMP'))
+    dispatch(fetchAPIData('http://localhost:8888/tvgrid-redux/api/getaverage?net='+this.props.selectedNetwork+'&metric=imp&demo=p2&starttime='+this.props.selectedWeek+'&stream=l7d&weeks=6', 'Week6-P2-L7D-IMP'))//THIS NEEDS TO exclude the current week
   }
 
   render() {
     const { selectedReddit, posts, isFetching, lastUpdated, nets, selectedNetwork, selectedWeek, weeks, ratings } = this.props
     const isEmpty = posts.length === 0
-    //console.log(ratings['Week1-P2-L7D-IMP'])
+    console.log("WEEK IS ", selectedWeek)
     //const t = ratings.hasOwnProperty('Week1-P2-L7D-IMP') ? ratings['Week1-P2-L7D-IMP'] : 0
 //console.log("here it is: ", ratings['Week1-P2-L7D-IMP']['rating_avg'], ratings['Week1-P2-L7D-IMP'])
 
@@ -97,7 +97,7 @@ class App extends Component {
 
 
         <ComparisonBox label1="P2+ L7 IMP vs." value1={parseInt(ratings['Week1-P2-L7D-IMP']['rating_avg'])} value2={parseInt(ratings['Week6-P2-L7D-IMP']['rating_avg'])} />
-        <GraphBox height={400} width={600} set1={ratings['Weekly7-P55-LSD']} set2={[]}/>
+        <GraphBox height={400} width={600} set1={ratings['Weekly7-P55-LSD']} graphData={[ratings['Weekly7-P55-LSD'], ratings['Weekly7-P2_17-LSD']]}/>
 
       </div>
     )
