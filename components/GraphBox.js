@@ -1,11 +1,8 @@
 import React, { Component, PropTypes } from 'react'
 import ReactDOM from 'react-dom'
-//import d3 from 'd3'
-
 var d3 = require('d3')
 
 export default class GraphBox extends Component {
-
 
   updateData(data){
     var x = d3.scaleLinear().domain([0, data.set1.length-1]).range([0, this.props.width]);
@@ -13,24 +10,18 @@ export default class GraphBox extends Component {
 
     var line = d3.line()
     .x(function(d, i) { 
-        //console.log(x(d.date), d.date_time, i , x(i))
-        return x(i)
-      })
+      return x(i)
+    })
     .y(function(d) { 
-        //console.log(d.value, y(d.value))
-        return y(d.rating_avg)
-      });
+      return y(d.rating_avg)
+    });
 
     var el = d3.select(ReactDOM.findDOMNode(this)).select("svg")
 
     var xAxis = d3.axisBottom(x);
-
-        //.key(function(d){return d.date_time})
-
         var xlabels = data.set1.map(function(d){
           var t = new Date(d.date_time)
-          var s = t.getMonth()+1+"/"+t.getDate()+"/"+t.getFullYear() 
-          console.log(s)
+          var s = t.getMonth()+1+"/"+t.getDate()+"/"+t.getFullYear().toString().substr(2,2);
           return s
         })
 
@@ -38,25 +29,21 @@ export default class GraphBox extends Component {
         xAxis.tickFormat(function(d,i){
           return xlabels[i];
         })
+
       // Add the x-axis.
+      el.selectAll(".xaxis").remove()
       el.append("g")
-      .attr("class", "x axis")
+      .attr("class", "xaxis")
       .attr("transform", "translate(30,"+(this.props.height-20)+")")
       .call(xAxis);
 
+      //add the y axis
       var yAxisLeft = d3.axisLeft(y);
+      el.selectAll(".yaxis").remove()
       el.append("g")
-      .attr("class", "y axis")
+      .attr("class", "yaxis")
       .attr("transform", "translate(30,20)")
       .call(yAxisLeft);
-
-
-      console.log("data set", data.set1)
-
-      function ratings(d){
-        console.log(d.rating_avg)
-        return parseInt(d.rating_avg)
-      }
 
       var d= el.selectAll("circle").data(data.set1);      
 
@@ -64,27 +51,21 @@ export default class GraphBox extends Component {
       .attr("transform", "translate(30,20)")
       .attr("r", 3.5)
       .merge(d)//ENTER AND UPDATE
-        .attr("cx", function(d, i) { 
-        console.log(d, i, x(i))
+      .attr("cx", function(d, i) { 
         return x(i); })
-        .attr("cy", function(d) { 
-        console.log("BEER", d);
+      .attr("cy", function(d) { 
         return y(d.rating_avg); });
 
-
-      function t(){
-        console.log("REMOVING");
-      }
-
-      d.exit().call(t).remove();
+      d.exit().remove();
 
 
-      var graph =  el.append("svg:path").data([data.set1]);
-
-      graph.attr("d", line)
-      
-      ///.attr("transform", "translate(30,20)")
-      //
+      el.selectAll(".graph-line").remove()
+      var graph = el.append("g").data([data.set1]);
+      console.log("here is graph so far", graph)
+      graph.append("path")
+      .attr("class", "graph-line")
+      .attr("d", line)
+      .attr("transform", "translate(30,20)");
     }
 
     componentWillReceiveProps(nextprop){
