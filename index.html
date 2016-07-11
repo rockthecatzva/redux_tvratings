@@ -1,36 +1,90 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Redux async example</title>
-    <style>
-			/* tell the SVG path to be a thin blue line without any area fill */
-			path {
-				stroke: steelblue;
-				stroke-width: 1;
-				fill: none;
-			}
-			
-			.axis {
-			  shape-rendering: crispEdges;
-			}
-			.x.axis line {
-			  stroke: lightgrey;
-			}
-			.x.axis .minor {
-			  stroke-opacity: .5;
-			}
-			.x.axis path {
-			 stroke: black; 
-			}
-			.y.axis line, .y.axis path {
-			  fill: none;
-			  stroke: #000;
-			}
-		</style>
-  </head>
-  <body>
-    <div id="root">
-    </div>
-    <script src="dist/bundle.js"></script>
-  </body>
+<head>
+	<title>Redux async example</title>
+	<style>
+	/* tell the SVG path to be a thin blue line without any area fill */
+
+	@font-face {
+		font-family: bebas;
+		src: url("./fonts/BebasNeue Bold.otf")
+	}
+
+	@font-face {
+		font-family: opensans;
+		src: url("./fonts/OpenSans-Light.ttf")
+	}
+
+	path {
+		stroke: steelblue;
+		stroke-width: 1;
+		fill: none;
+	}
+
+	.axis {
+		shape-rendering: crispEdges;
+	}
+	.x.axis line {
+		stroke: lightgrey;
+	}
+	.x.axis .minor {
+		stroke-opacity: .5;
+	}
+	.x.axis path {
+		stroke: black; 
+	}
+	.y.axis line, .y.axis path {
+		fill: none;
+		stroke: #000;
+	}
+
+	.header-text, select {
+		font-family: bebas;
+		font-size: 2.8em;
+	}
+
+	.infobox-primaryval{
+		    font-family: bebas;
+    font-size: 2.5em;
+    text-align: center;
+	}
+
+	.infobox-changeval{
+		float: right;
+	    top: -2em;
+	    position: relative;
+	    font-size: 0.9em;
+	    font-family: opensans;
+	}
+
+	.infobox-label{
+		font-family: opensans;
+		font-size: 0.9em;
+		text-align: center;
+	}
+
+	.red{
+		color: red;
+	}
+
+	.green{
+		color: green;
+	}
+
+
+	</style>
+
+	<script type="text/javascript" src="./node_modules/jquery/dist/jquery.min.js"></script>
+	<script src="./node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+
+
+	<link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
+
+</head>
+<body>
+	<div id="root" class="container">
+	</div>
+	<script src="dist/bundle.js"></script>
+</body>
 </html>

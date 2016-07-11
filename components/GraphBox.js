@@ -2,10 +2,13 @@ import React, { Component, PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 var d3 = require('d3')
 
+const MARGIN =  30
+
+
 export default class GraphBox extends Component {
 
   updateData(data){
-    var x = d3.scaleLinear().domain([0, data.graphData[0].length-1]).range([0, this.props.width]);
+    var x = d3.scaleLinear().domain([0, data.graphData[0].length-1]).range([MARGIN, this.props.width-MARGIN]);
 
     var max = 0
 
@@ -19,7 +22,7 @@ export default class GraphBox extends Component {
     })}
 
     console.log("max is ", max, data.graphData)
-    var y = d3.scaleLinear().domain([0, max]).range([this.props.height, 0]);
+    var y = d3.scaleLinear().domain([0, max]).range([this.props.height-MARGIN, MARGIN]);
 
     var line = d3.line()
     .x(function(d, i) { 
@@ -32,22 +35,21 @@ export default class GraphBox extends Component {
     var el = d3.select(ReactDOM.findDOMNode(this)).select("svg")
 
     var xAxis = d3.axisBottom(x);
-        var xlabels = data.graphData[0].map(function(d){
-          var t = new Date(d.date_time)
-          var s = t.getMonth()+1+"/"+t.getDate()+"/"+t.getFullYear().toString().substr(2,2);
-          return s
-        })
+    var xlabels = data.graphData[0].map(function(d){
+      var t = new Date(d.date_time)
+      var s = t.getMonth()+1+"/"+t.getDate()+"/"+t.getFullYear().toString().substr(2,2);
+      return s
+    })
 
-        xAxis.ticks(data.graphData[0].length)
-        xAxis.tickFormat(function(d,i){
-          return xlabels[i];
-        })
-
+    xAxis.ticks(data.graphData[0].length)
+    xAxis.tickFormat(function(d,i){
+      return xlabels[i];
+    })
       // Add the x-axis.
       el.selectAll(".xaxis").remove()
       el.append("g")
       .attr("class", "xaxis")
-      .attr("transform", "translate(30,"+(this.props.height-20)+")")
+      .attr("transform", "translate(0,"+(this.props.height-MARGIN)+")")
       .call(xAxis);
 
       //add the y axis
@@ -55,10 +57,8 @@ export default class GraphBox extends Component {
       el.selectAll(".yaxis").remove()
       el.append("g")
       .attr("class", "yaxis")
-      .attr("transform", "translate(30,20)")
+      .attr("transform", "translate("+MARGIN+",0)")
       .call(yAxisLeft);
-
-      
 
       el.selectAll(".graph-line").remove()
       el.selectAll(".dot").remove()
@@ -66,10 +66,10 @@ export default class GraphBox extends Component {
       {data.graphData.map(function(arr){
 
         var d= el.append("g").selectAll("circle").data(arr);      
-              d.enter().append("circle")
-              .attr("transform", "translate(30,20)")
-              .attr("class", "dot")
-              .attr("r", 3.5)
+        d.enter().append("circle")
+        //.attr("transform", "translate("+MARGIN+",-"+MARGIN+")")
+        .attr("class", "dot")
+        .attr("r", 3.5)
               .merge(d)//ENTER AND UPDATE
               .attr("cx", function(d, i) { 
                 console.log("calcling circle")
@@ -80,29 +80,19 @@ export default class GraphBox extends Component {
               d.exit().remove();
 
               var graph = el.append("g").data([arr]);
-                  graph.append("path")
-                    .attr("class", "graph-line")
-                    .attr("d", line)
-                    .attr("transform", "translate(30,20)");
-
-
-      })}
-
-
-      
-
-      
-      //console.log("here is graph so far", graph)
-      
+              graph.append("path")
+              .attr("class", "graph-line")
+              .attr("d", line)
+              //.attr("transform", "translate("+MARGIN+",-"+MARGIN+")")
+            })}      
     }
 
     componentWillReceiveProps(nextprop){
-      if(nextprop.set1 !== this.props.set1){
+      if((nextprop.graphData !== this.props.graphData)&&(nextprop.graphData[0])){
+        console.log(nextprop.graphData)
         this.updateData(nextprop);
       }
-
     }
-
 
     componentDidMount(){
       var el = ReactDOM.findDOMNode(this)
@@ -113,9 +103,8 @@ export default class GraphBox extends Component {
     }
 
 
-
     render() {
-      const { set1, graphData } = this.props
+      const { graphData } = this.props
 
       return (
         <div className={"graph-box panel-body"}></div>
@@ -124,7 +113,6 @@ export default class GraphBox extends Component {
   }
 
   GraphBox.propTypes = {
-    set1: PropTypes.array.isRequired,
     graphData: PropTypes.array.isRequired,
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired

@@ -17,13 +17,14 @@ export default class ComparisonBox extends Component {
         }
 
     return (
-      <span>
+      <div className="info-box col-sm-2 panel panel-default">
         <div className="infobox-primaryval">{value1}</div>
-        <span className="infobox-label"> {label1}</span>
         <span className={colorclass+" infobox-changeval"}>
         <span className={arrow} aria-hidden="true"></span> {diff}%</span> 
+        <div className="infobox-label"> {label1}</div>
         
-      </span>
+        
+      </div>
     )
   }
 }
