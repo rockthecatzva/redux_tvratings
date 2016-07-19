@@ -15,7 +15,10 @@ class App extends Component {
     this.handleNetChange = this.handleNetChange.bind(this)
     this.handleWeekChange = this.handleWeekChange.bind(this)
     this.handleSubmitClick = this.handleSubmitClick.bind(this)
+
+
   }  
+
 
   componentDidMount() {
     console.log("mounted")
@@ -82,6 +85,9 @@ class App extends Component {
     console.log("WEEK IS ", selectedWeek)
     //const t = ratings.hasOwnProperty('Week1-P2-L7D-IMP') ? ratings['Week1-P2-L7D-IMP'] : 0
 //console.log("here it is: ", ratings['Week1-P2-L7D-IMP']['rating_avg'], ratings['Week1-P2-L7D-IMP'])
+    
+
+    
 
     return (
       <div>

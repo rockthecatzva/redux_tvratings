@@ -3,12 +3,17 @@ import ReactDOM from 'react-dom'
 var d3 = require('d3')
 
 const MARGIN =  30
-
+var width, height = 0
 
 export default class GraphBox extends Component {
 
   updateData(data){
-    var x = d3.scaleLinear().domain([0, data.graphData[0].length-1]).range([MARGIN, this.props.width-MARGIN]);
+    var el = d3.select(ReactDOM.findDOMNode(this)).select("svg")
+    //var width = parseInt(d3.select(d3.select(ReactDOM.findDOMNode(this))).style("width")) - MARGIN*2,
+        //height = parseInt(d3.select(d3.select(ReactDOM.findDOMNode(this))).style("height")) - MARGIN*2;
+    console.log("<<<<<<>>>>>>", this, d3.select(el))
+
+    var x = d3.scaleLinear().domain([0, data.graphData[0].length-1]).range([MARGIN, width-MARGIN]);
 
     var max = 0
 
@@ -21,8 +26,8 @@ export default class GraphBox extends Component {
       })
     })}
 
-    console.log("max is ", max, data.graphData)
-    var y = d3.scaleLinear().domain([0, max]).range([this.props.height-MARGIN, MARGIN]);
+    //console.log("max is ", max, data.graphData)
+    var y = d3.scaleLinear().domain([0, max]).range([height-MARGIN, MARGIN]);
 
     var line = d3.line()
     .x(function(d, i) { 
@@ -32,7 +37,7 @@ export default class GraphBox extends Component {
       return y(d.rating_avg)
     });
 
-    var el = d3.select(ReactDOM.findDOMNode(this)).select("svg")
+    
 
     var xAxis = d3.axisBottom(x);
     var xlabels = data.graphData[0].map(function(d){
@@ -89,10 +94,14 @@ export default class GraphBox extends Component {
 
     componentWillReceiveProps(nextprop){
       if((nextprop.graphData !== this.props.graphData)&&(nextprop.graphData[0])){
-        console.log(nextprop.graphData)
+        
         this.updateData(nextprop);
       }
     }
+
+
+
+
 
     componentDidMount(){
       var el = ReactDOM.findDOMNode(this)
@@ -100,11 +109,18 @@ export default class GraphBox extends Component {
       var svg = d3.select(el).append("svg")
       .attr("width", this.props.width)
       .attr("height", this.props.height)
+
+       var el = ReactDOM.findDOMNode(this);
+      
+      width = el.offsetWidth
+      height = el.offsetHeight
+      console.log("HEIGHT TeSt -->> ", width, height)
     }
 
 
     render() {
       const { graphData } = this.props
+      console.log("check here")
 
       return (
         <div className={"graph-box panel-body"}></div>
