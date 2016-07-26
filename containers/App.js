@@ -1,8 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { selectReddit, fetchPostsIfNeeded, invalidateReddit, fetchNets, selectNetwork, fetchWeeks, selectWeek, fetchAPIData} from '../actions'
+import { fetchNets, selectNetwork, fetchWeeks, selectWeek, fetchAPIData} from '../actions'
 import Picker from '../components/Picker'
-import Posts from '../components/Posts'
 import ComparisonBox from '../components/ComparisonBox'
 import GraphBox from '../components/GraphBox'
 
@@ -10,31 +9,18 @@ import GraphBox from '../components/GraphBox'
 class App extends Component {
   constructor(props) {
     super(props)
-    //this.handleChange = this.handleChange.bind(this)
-    //this.handleRefreshClick = this.handleRefreshClick.bind(this)
     this.handleNetChange = this.handleNetChange.bind(this)
     this.handleWeekChange = this.handleWeekChange.bind(this)
     this.handleSubmitClick = this.handleSubmitClick.bind(this)
-
-
   }  
 
-
   componentDidMount() {
-    console.log("mounted")
-    const { dispatch, selectedReddit, nets, selectedNetwork } = this.props
-    //dispatch(fetchPostsIfNeeded(selectedReddit))
+    const { dispatch, nets, selectedNetwork } = this.props
     dispatch(fetchNets())
     dispatch(fetchWeeks())
   }
 
   componentWillReceiveProps(nextProps) {
-    /*
-    if (nextProps.selectedReddit !== this.props.selectedReddit) {
-      const { dispatch, selectedReddit } = nextProps
-      dispatch(fetchPostsIfNeeded(selectedReddit))
-    }
-*/
     if (nextProps.selectedNetwork !== this.props.selectedNetwork) {
       const {dispatch, selectedNetwork} = nextProps
       this.handleNetChange(nextProps.selectedNetwork)
@@ -44,16 +30,9 @@ class App extends Component {
       const {dispatch, selectedWeek} = nextProps
       this.handleWeekChange(nextProps.selectedWeek)
     }
-
   }
-/*
-  handleChange(nextReddit) {
-    this.props.dispatch(selectReddit(nextReddit))
-  }
-*/
 
   handleNetChange(nextNet){
-    console.log("on change", nextNet)
     this.props.dispatch(selectNetwork(nextNet))
   }
 
@@ -61,15 +40,7 @@ class App extends Component {
     this.props.dispatch(selectWeek(nextWk))
   }
 
-/*
-  handleRefreshClick(e) {
-    e.preventDefault()
-    const { dispatch, selectedReddit } = this.props
-    dispatch(invalidateReddit(selectedReddit))
-    dispatch(fetchPostsIfNeeded(selectedReddit))
-  }
-*/
-
+  
   handleSubmitClick(e){
     e.preventDefault()
     const{dispatch} = this.props
@@ -80,15 +51,8 @@ class App extends Component {
   }
 
   render() {
-    const { selectedReddit, posts, isFetching, lastUpdated, nets, selectedNetwork, selectedWeek, weeks, ratings } = this.props
-    const isEmpty = posts.length === 0
-    console.log("WEEK IS ", selectedWeek)
-    //const t = ratings.hasOwnProperty('Week1-P2-L7D-IMP') ? ratings['Week1-P2-L7D-IMP'] : 0
-//console.log("here it is: ", ratings['Week1-P2-L7D-IMP']['rating_avg'], ratings['Week1-P2-L7D-IMP'])
+    const { isFetching, nets, selectedNetwork, selectedWeek, weeks, ratings } = this.props
     
-
-    
-
     return (
       <div>
       <div className="row">
@@ -114,51 +78,35 @@ class App extends Component {
 
       <div className="row">
         <div className="col-sm-5 panel panel-default">
-          <GraphBox height={300} width={500} graphData={[ratings['Weekly7-P55-LSD'], ratings['Weekly7-P2_17-LSD']]}/>
-        </div>
-        
+          <GraphBox showSpinner={true} height={300} width={500} graphData={[ratings['Weekly7-P55-LSD'], ratings['Weekly7-P2_17-LSD']]}/>
+        </div>      
       </div>
         
-        
-
+  
       </div>
     )
   }
 }
 
 App.propTypes = {
-  selectedReddit: PropTypes.string.isRequired,
   selectedNetwork: PropTypes.string.isRequired,
   selectedWeek: PropTypes.string.isRequired,
   weeks: PropTypes.object.isRequired,
-  posts: PropTypes.array.isRequired,
   ratings: PropTypes.object.isRequired,
   nets: PropTypes.object.isRequired,
   isFetching: PropTypes.bool.isRequired,
-  lastUpdated: PropTypes.number,
   dispatch: PropTypes.func.isRequired
 }
 
 function mapStateToProps(state) {
-  const { selectedReddit, postsByReddit, nets, selectedNetwork, selectedWeek, weeks, ratings } = state
-  const {
-    isFetching,
-    lastUpdated,
-    items: posts
-  } = postsByReddit[selectedReddit] || {
-    isFetching: true,
-    items: []
-  }
+  const {isFetching, nets, selectedNetwork, selectedWeek, weeks, ratings } = state
 
   return {
-    selectedReddit,
     selectedNetwork,
     selectedWeek,
-    posts,
     nets,
     ratings,
     isFetching,
-    lastUpdated,
     weeks
   }
 }
