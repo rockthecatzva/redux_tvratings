@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux'
 import {
   SELECT_REDDIT, INVALIDATE_REDDIT, RECEIVE_DATA,
-  REQUEST_POSTS, RECEIVE_POSTS, RECEIVE_NETS, SELECT_NETWORK, RECEIVE_WEEKS, SELECT_WEEK
+  REQUEST_POSTS, RECEIVE_POSTS, RECEIVE_NETS, SELECT_NETWORK, RECEIVE_WEEKS, SELECT_WEEK, IS_FETCHING, INCREMENT_TX, INCREMENT_RX
 } from '../actions'
 
 function selectedReddit(state = 'reactjs', action) {
@@ -42,6 +42,35 @@ function ratings(state={'Week1-P2-L7D-IMP': {'rating_avg': 7}, 'Week6-P2-L7D-IMP
 
     default:
       return state
+  }
+}
+
+function isFetching(state={ status: true, txCount: 0, rxCount: 0}, action){
+  switch(action.type){
+    case IS_FETCHING:
+      console.log('is fetching set to true!!!')
+      return Object.assign({}, state, {
+        status: true,
+        txCount: 0,
+        rxCount: 0
+      })
+
+    case INCREMENT_TX:
+      return Object.assign({}, state, {
+        txCount: state['txCount']+1
+      })
+    
+    case RECEIVE_DATA:
+      var rct = state['rxCount']+1
+      var allLoaded = (rct >= state['txCount'])
+      console.log("ALL LOADED", allLoaded, rct, state['txCount'])
+
+      return Object.assign({}, state, {
+        rxCount: rct,
+        status: allLoaded
+      })
+      default:
+        return state
   }
 }
 
@@ -119,7 +148,8 @@ const rootReducer = combineReducers({
   nets,
   weeks,
   selectedWeek,
-  ratings
+  ratings, 
+  isFetching
 })
 
 export default rootReducer

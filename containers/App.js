@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { fetchNets, selectNetwork, fetchWeeks, selectWeek, fetchAPIData} from '../actions'
+import { fetchNets, selectNetwork, fetchWeeks, selectWeek, fetchAPIData, setFetching} from '../actions'
 import Picker from '../components/Picker'
 import ComparisonBox from '../components/ComparisonBox'
 import GraphBox from '../components/GraphBox'
@@ -12,6 +12,7 @@ class App extends Component {
     this.handleNetChange = this.handleNetChange.bind(this)
     this.handleWeekChange = this.handleWeekChange.bind(this)
     this.handleSubmitClick = this.handleSubmitClick.bind(this)
+    
   }  
 
   componentDidMount() {
@@ -44,6 +45,7 @@ class App extends Component {
   handleSubmitClick(e){
     e.preventDefault()
     const{dispatch} = this.props
+    this.props.dispatch(setFetching(true))
     dispatch(fetchAPIData('http://localhost:8888/tvgrid-redux/api/getweeklyratings/?net%5B%5D='+this.props.selectedNetwork+'&metric=aa&stream%5B%5D=lsd&demo%5B%5D=p55&starttime='+this.props.selectedWeek+'&weeks=7', 'Weekly7-P55-LSD'))
     dispatch(fetchAPIData('http://localhost:8888/tvgrid-redux/api/getweeklyratings/?net%5B%5D='+this.props.selectedNetwork+'&metric=aa&stream%5B%5D=lsd&demo%5B%5D=p2_17&starttime='+this.props.selectedWeek+'&weeks=7', 'Weekly7-P2_17-LSD'))
     dispatch(fetchAPIData('http://localhost:8888/tvgrid-redux/api/getaverage?net='+this.props.selectedNetwork+'&metric=imp&demo=p2&starttime='+this.props.selectedWeek+'&stream=l7d&weeks=1', 'Week1-P2-L7D-IMP'))
@@ -78,7 +80,7 @@ class App extends Component {
 
       <div className="row">
         <div className="col-sm-5 panel panel-default">
-          <GraphBox showSpinner={true} height={300} width={500} graphData={[ratings['Weekly7-P55-LSD'], ratings['Weekly7-P2_17-LSD']]}/>
+          <GraphBox showSpinner={isFetching} height={300} width={500} graphData={[ratings['Weekly7-P55-LSD'], ratings['Weekly7-P2_17-LSD']]}/>
         </div>      
       </div>
         
@@ -94,12 +96,12 @@ App.propTypes = {
   weeks: PropTypes.object.isRequired,
   ratings: PropTypes.object.isRequired,
   nets: PropTypes.object.isRequired,
-  isFetching: PropTypes.bool.isRequired,
+  isFetching: PropTypes.object.isRequired,
   dispatch: PropTypes.func.isRequired
 }
 
 function mapStateToProps(state) {
-  const {isFetching, nets, selectedNetwork, selectedWeek, weeks, ratings } = state
+  const {nets, selectedNetwork, selectedWeek, weeks, ratings, isFetching } = state
 
   return {
     selectedNetwork,

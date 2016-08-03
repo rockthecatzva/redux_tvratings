@@ -1,8 +1,11 @@
 import React, { Component, PropTypes } from 'react'
 import ReactDOM from 'react-dom'
+var Loader = require('halogen/PulseLoader');
+
 var d3 = require('d3')
 
 const MARGIN =  30
+//IS THIS STATE???
 var width, height = 0
 var spin = true
 
@@ -60,7 +63,7 @@ export default class GraphBox extends Component {
       el.selectAll(".graph-line").remove()
       el.selectAll(".dot").remove()
 
-      spin = false
+  
 
       {data.graphData.map(function(arr){
         var graph = el.append("g").data([arr]);
@@ -91,10 +94,8 @@ export default class GraphBox extends Component {
 
     toggleSpinner(showspin){
       if(showspin){
-
-      }
-      else{
-
+        spin = true// THIS MAKES IT STATE???????
+        console.log("Showing the spinner on the graph")
       }
     }
 
@@ -104,7 +105,9 @@ export default class GraphBox extends Component {
       }
 
       if((nextprop.graphData !== this.props.graphData)&&(nextprop.graphData[0])){
-        this.updateData(nextprop);
+        this.updateData(nextprop)
+        spin = false
+         console.log("Removing the spinner")
       }
     }
 
@@ -123,13 +126,15 @@ export default class GraphBox extends Component {
 
     render() {
       const { graphData, showSpinner } = this.props
-      console.log("g dat yo", graphData, graphData[0])
+      
+
+      console.log("Rendering the graph", spin, this.spin, this.props.showSpinner)
 
       return (
         <div className={"graph-box panel-body"}>
         {spin &&
           <div className="spinner">
-            <i className="fa fa-refresh fa-spin fa-3x fa-fw"></i>
+            <Loader color="#26A65B" size="16px" margin="4px"/>
             <span className="sr-only">Loading...</span>
           </div>
         }

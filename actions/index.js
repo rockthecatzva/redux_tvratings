@@ -15,12 +15,35 @@ export const SELECT_NETWORK = 'SELECT_NETWORK'
 export const SELECT_WEEK = 'SELECT_WEEK'
 
 export const INVALIDATE_REDDIT = 'INVALIDATE_REDDIT'
+export const IS_FETCHING = 'IS_FETCHING'
+export const INCREMENT_RX = 'INCREMENT_RX'
+export const INCREMENT_TX = 'INCREMENT_TX'
 
 
 export function selectReddit(reddit) {
   return {
     type: SELECT_REDDIT,
     reddit
+  }
+}
+
+ export function setFetching(){
+  return{
+    type: IS_FETCHING
+  }
+}
+
+ export function incrRxCount(){
+  console.log("rx count action ob")
+  return{
+    type: INCREMENT_RX
+  }
+}
+
+export function incrTxCount(){
+  console.log('returning the tx-count action object')
+  return{
+    type: INCREMENT_TX
   }
 }
 
@@ -80,13 +103,10 @@ function receiveWeeks(data){
 }
 
 
-
-
-
 function fetchPosts(reddit) {
   return dispatch => {
     dispatch(requestPosts(reddit))
-    console.log(reddit)
+    //console.log(reddit)
     return fetch('https://www.reddit.com/r/'+reddit+'.json')
       .then(response => response.json())
       .then(json => dispatch(receivePosts(reddit, json)))
@@ -112,27 +132,25 @@ export function fetchWeeks() {
 }
 
 
-
-
 export function fetchAPIData(url, treeparent){
   return dispatch => {
     //fetch url data
+    dispatch(incrTxCount())
     return fetch(url)
       .then(response => response.json())
       .then(json => dispatch(receiveAPIData(treeparent, json)))
-    //then hit the callback
   }
 }
 
 function receiveAPIData(treeparent, indata){
-  console.log(indata)
+  //console.log("got the API data back", indata)
+  //dispatch(incrRxCount())
   return{
     type: RECEIVE_DATA,
     treeparent,
     data: indata//.map(indataob=> indata[indataob])
   }
 }
-
 
 
 function shouldFetchPosts(state, reddit) {
