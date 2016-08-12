@@ -4,6 +4,8 @@ import { fetchNets, selectNetwork, fetchWeeks, selectWeek, fetchAPIData, setFetc
 import Picker from '../components/Picker'
 import ComparisonBox from '../components/ComparisonBox'
 import GraphBox from '../components/GraphBox'
+import TelecastRankerBox from '../components/TelecastRankerBox'
+
 
 
 class App extends Component {
@@ -45,16 +47,20 @@ class App extends Component {
   handleSubmitClick(e){
     e.preventDefault()
     const{dispatch} = this.props
-    this.props.dispatch(setFetching(true))
+    dispatch(setFetching(true))
     dispatch(fetchAPIData('http://localhost:8888/tvgrid-redux/api/getweeklyratings/?net%5B%5D='+this.props.selectedNetwork+'&metric=aa&stream%5B%5D=lsd&demo%5B%5D=p55&starttime='+this.props.selectedWeek+'&weeks=7', 'Weekly7-P55-LSD'))
     dispatch(fetchAPIData('http://localhost:8888/tvgrid-redux/api/getweeklyratings/?net%5B%5D='+this.props.selectedNetwork+'&metric=aa&stream%5B%5D=lsd&demo%5B%5D=p2_17&starttime='+this.props.selectedWeek+'&weeks=7', 'Weekly7-P2_17-LSD'))
     dispatch(fetchAPIData('http://localhost:8888/tvgrid-redux/api/getaverage?net='+this.props.selectedNetwork+'&metric=imp&demo=p2&starttime='+this.props.selectedWeek+'&stream=l7d&weeks=1', 'Week1-P2-L7D-IMP'))
     dispatch(fetchAPIData('http://localhost:8888/tvgrid-redux/api/getaverage?net='+this.props.selectedNetwork+'&metric=imp&demo=p2&starttime='+this.props.selectedWeek+'&stream=l7d&weeks=6', 'Week6-P2-L7D-IMP'))//THIS NEEDS TO exclude the current week
+    dispatch(fetchAPIData('http://rockthecatzva.com/slim-tracker/api/getweeklylist/?net=FAKENET&metrics%5B%5D=aa&streams%5B%5D=lsd&demos%5B%5D=p25_54&demos%5B%5D=w25_54&starttime=2014-12-22&weeks=1', 'Weekly-Telecast-List'))
   }
 
   render() {
     const { isFetching, nets, selectedNetwork, selectedWeek, weeks, ratings } = this.props
     
+    //var rat = ratings['Week1-P2-L7D-IMP'];
+    //console.log("check this", rat)
+
     return (
       <div>
       <div className="row">
@@ -75,15 +81,15 @@ class App extends Component {
       </div>
 
       <div className="row">
-        <ComparisonBox label1="P2+ L7 IMP vs." value1={parseInt(ratings['Week1-P2-L7D-IMP']['rating_avg'])} value2={parseInt(ratings['Week6-P2-L7D-IMP']['rating_avg'])} />
+        <ComparisonBox label1="P2+ L7 IMP vs." value1={ratings['Week1-P2-L7D-IMP'] ? parseInt(ratings['Week1-P2-L7D-IMP']['data']['rating']):0 } value2={ratings['Week6-P2-L7D-IMP']?parseInt(ratings['Week6-P2-L7D-IMP']['data']['rating']):0} round={true} />
       </div>
 
       <div className="row">
         <div className="col-sm-5 panel panel-default">
-          <GraphBox showSpinner={isFetching} height={300} width={500} graphData={[ratings['Weekly7-P55-LSD'], ratings['Weekly7-P2_17-LSD']]}/>
+          <GraphBox showSpinner={isFetching['status']} height={300} width={500} graphData={(ratings['Weekly7-P55-LSD']&&ratings['Weekly7-P2_17-LSD'])?[ratings['Weekly7-P55-LSD']['data'], ratings['Weekly7-P2_17-LSD']['data']]:[0]}/>
         </div>      
       </div>
-        
+      
   
       </div>
     )

@@ -12,16 +12,22 @@ var spin = true
 export default class GraphBox extends Component {
 
   updateData(data){
+    
     var el = d3.select(ReactDOM.findDOMNode(this)).select("svg")
     var x = d3.scaleLinear().domain([0, data.graphData[0].length-1]).range([MARGIN, width-MARGIN])
     var max = 0
 
+    console.log("did this fix", data.graphData)
+
     {data.graphData.map(function(arr){
-      arr.map(function(rating){
-        if(rating.rating_avg>max){
-          max = rating.rating_avg;
+      //console.log(arr, "is the error here?")
+      if(arr){
+        arr.map(function(rating){
+          if(rating.rating>max){
+            max = rating.rating;
+            }
+          })
         }
-      })
     })}
 
     var y = d3.scaleLinear().domain([0, max]).range([height-MARGIN, MARGIN]);
@@ -31,7 +37,7 @@ export default class GraphBox extends Component {
       return x(i)
     })
     .y(function(d) { 
-      return y(d.rating_avg)
+      return y(d.rating)
     });
 
     var xAxis = d3.axisBottom(x);
@@ -63,8 +69,6 @@ export default class GraphBox extends Component {
       el.selectAll(".graph-line").remove()
       el.selectAll(".dot").remove()
 
-  
-
       {data.graphData.map(function(arr){
         var graph = el.append("g").data([arr]);
         graph.append("path")
@@ -80,15 +84,13 @@ export default class GraphBox extends Component {
               .attr("cx", function(d, i) { 
                 return x(i); })
               .attr("cy", function(d) { 
-                return y(d.rating_avg); })
+                return y(d.rating); })
               .style("fill", "white")
               .style("stroke", "black")
               .style("stroke-width", "2");
 
         d.exit().remove();
       })}
-
-
     }
 
 
@@ -100,6 +102,9 @@ export default class GraphBox extends Component {
     }
 
     componentWillReceiveProps(nextprop){
+      console.log("getting data", nextprop)
+
+
       if(nextprop.showSpinner!== this.props.showSpinner){
         this.toggleSpinner(nextprop.showSpinner)
       }
@@ -127,8 +132,7 @@ export default class GraphBox extends Component {
     render() {
       const { graphData, showSpinner } = this.props
       
-
-      console.log("Rendering the graph", spin, this.spin, this.props.showSpinner)
+      //console.log("Rendering the graph", spin, this.spin, this.props.showSpinner)
 
       return (
         <div className={"graph-box panel-body"}>

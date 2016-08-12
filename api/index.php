@@ -287,7 +287,7 @@ $app->get('/getaverage/', function () {
 
     try 
     {       
-        $qry = "SELECT avg(tr.rating_val) as rating_avg, SUM(ti.duration) as duration FROM telecast_info ti LEFT JOIN telecast_ratings tr ON tr.net = ti.net AND tr.date_time =ti.date_time WHERE (ti.net = '".$net."' AND tr.rating_type='".$metric."' AND tr.data_stream='".$stream."'";//
+        $qry = "SELECT avg(tr.rating_val) as rating, SUM(ti.duration) as duration FROM telecast_info ti LEFT JOIN telecast_ratings tr ON tr.net = ti.net AND tr.date_time =ti.date_time WHERE (ti.net = '".$net."' AND tr.rating_type='".$metric."' AND tr.data_stream='".$stream."'";//
         
 
         if($demo){
@@ -470,7 +470,7 @@ $app->get('/getweeklyratings/', function () {
 
 
 
-        $select = "SELECT ROUND(AVG(tr.rating_val), ".$roundval.") as rating_avg, WEEK(tr.date_time,1) as wk, tr.date_time";
+        $select = "SELECT ROUND(AVG(tr.rating_val), ".$roundval.") as rating, WEEK(tr.date_time,1) as wk, tr.date_time";
         
 
         $where = "WHERE (";

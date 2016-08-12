@@ -33,9 +33,11 @@ function selectedWeek(state='def1', action){
   }
 }
 
-function ratings(state={'Week1-P2-L7D-IMP': {'rating_avg': 7}, 'Week6-P2-L7D-IMP': {'rating_avg': 7}}, action){
+function ratings(state={}, action){
   switch(action.type){
     case RECEIVE_DATA:
+    //var label = action.treeparent
+      //console.log("in reducer - ratings", action.data)
       return Object.assign({}, state, {
           [action.treeparent]: action.data
       })
@@ -74,7 +76,7 @@ function isFetching(state={ status: true, txCount: 0, rxCount: 0}, action){
   }
 }
 
-
+/*
 function posts(state = {
   isFetching: false,
   didInvalidate: false,
@@ -114,11 +116,12 @@ function postsByReddit(state = { }, action) {
       return state
   }
 }
+*/
 
 function nets(state={nets:[], selectedNetwork:'init2'}, action){
   switch(action.type){
     case RECEIVE_NETS:
-      console.log("reducer - ", action)
+      console.log("reducer - nets", action)
       return Object.assign({}, state, {
         nets: action.nets,
         selectedNetwork: selectedNetwork(state[action.selectedNetwork], action)
@@ -142,8 +145,8 @@ function weeks(state={weeks:[], selectedWeek: 'def2'}, action){
 
 
 const rootReducer = combineReducers({
-  postsByReddit,
-  selectedReddit,
+  //postsByReddit,
+  //selectedReddit,
   selectedNetwork,
   nets,
   weeks,
