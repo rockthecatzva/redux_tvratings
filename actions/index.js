@@ -46,6 +46,14 @@ export function incrTxCount(){
   }
 }
 
+function requestData(treeparent){
+  return{
+    type: REQUEST_DATA,
+    treeparent
+  }
+}
+
+
 export function selectNetwork(net){
   return{
     type: SELECT_NETWORK,
@@ -138,6 +146,7 @@ export function fetchAPIData(url, treeparent){
   return dispatch => {
     //fetch url data
     dispatch(incrTxCount())
+    dispatch(requestData(treeparent))
     return fetch(url)
       .then(response => response.json())
       .then(json => dispatch(receiveAPIData(treeparent, json)))
@@ -149,7 +158,7 @@ function receiveAPIData(treeparent, indata){
   return{
     type: RECEIVE_DATA,
     treeparent,
-    data: {"data": indata}//.map(indataob=> indata[indataob])
+    data: {"data": indata, "isFetching": false},//.map(indataob=> indata[indataob])
   }
 }
 

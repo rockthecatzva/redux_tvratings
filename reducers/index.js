@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux'
 import {
-  SELECT_REDDIT, INVALIDATE_REDDIT, RECEIVE_DATA,
+  SELECT_REDDIT, INVALIDATE_REDDIT, RECEIVE_DATA, REQUEST_DATA,
   REQUEST_POSTS, RECEIVE_POSTS, RECEIVE_NETS, SELECT_NETWORK, RECEIVE_WEEKS, SELECT_WEEK, IS_FETCHING, INCREMENT_TX, INCREMENT_RX
 } from '../actions'
 
@@ -35,11 +35,18 @@ function selectedWeek(state='def1', action){
 
 function ratings(state={}, action){
   switch(action.type){
+    case REQUEST_DATA:
+      return Object.assign({}, state, {
+        [action.treeparent]: {
+          "data": 0,
+          "isFetching": true}
+      })
     case RECEIVE_DATA:
     //var label = action.treeparent
       //console.log("in reducer - ratings", action.data)
       return Object.assign({}, state, {
-          [action.treeparent]: action.data
+          [action.treeparent]: action.data,
+          //isFetching: false
       })
 
     default:

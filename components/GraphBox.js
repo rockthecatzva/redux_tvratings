@@ -109,10 +109,10 @@ export default class GraphBox extends Component {
         this.toggleSpinner(nextprop.showSpinner)
       }
 
-      if((nextprop.graphData !== this.props.graphData)&&(nextprop.graphData[0])){
+      if((nextprop.graphData !== this.props.graphData)&&(nextprop.graphData[0][0]&&nextprop.graphData[1][0])){
         this.updateData(nextprop)
         spin = false
-         console.log("Removing the spinner")
+         console.log("Removing the spinner", nextprop)
       }
     }
 

@@ -80,6 +80,7 @@ class App extends Component {
         <button type="button" onClick={this.handleSubmitClick} >Submit</button>
       </div>
 
+      
       <div className="row">
         <ComparisonBox label1="P2+ L7 IMP vs." value1={ratings['Week1-P2-L7D-IMP'] ? parseInt(ratings['Week1-P2-L7D-IMP']['data']['rating']):0 } value2={ratings['Week6-P2-L7D-IMP']?parseInt(ratings['Week6-P2-L7D-IMP']['data']['rating']):0} round={true} />
       </div>
