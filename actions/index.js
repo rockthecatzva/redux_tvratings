@@ -28,6 +28,8 @@ export function selectReddit(reddit) {
   }
 }
 */
+
+/*
  export function setFetching(){
   return{
     type: IS_FETCHING
@@ -45,6 +47,8 @@ export function incrTxCount(){
     type: INCREMENT_TX
   }
 }
+
+*/
 
 function requestData(treeparent){
   return{
@@ -145,7 +149,7 @@ export function fetchWeeks() {
 export function fetchAPIData(url, treeparent){
   return dispatch => {
     //fetch url data
-    dispatch(incrTxCount())
+    //dispatch(incrTxCount())
     dispatch(requestData(treeparent))
     return fetch(url)
       .then(response => response.json())

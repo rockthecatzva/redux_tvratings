@@ -54,6 +54,7 @@ function ratings(state={}, action){
   }
 }
 
+/*
 function isFetching(state={ status: true, txCount: 0, rxCount: 0}, action){
   switch(action.type){
     case IS_FETCHING:
@@ -82,6 +83,7 @@ function isFetching(state={ status: true, txCount: 0, rxCount: 0}, action){
         return state
   }
 }
+*/
 
 /*
 function posts(state = {
@@ -159,7 +161,7 @@ const rootReducer = combineReducers({
   weeks,
   selectedWeek,
   ratings, 
-  isFetching
+  //isFetching
 })
 
 export default rootReducer

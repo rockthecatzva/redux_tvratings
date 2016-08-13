@@ -7,7 +7,6 @@ var d3 = require('d3')
 const MARGIN =  30
 //IS THIS STATE???
 var width, height = 0
-var spin = true
 
 export default class GraphBox extends Component {
 
@@ -94,25 +93,12 @@ export default class GraphBox extends Component {
     }
 
 
-    toggleSpinner(showspin){
-      if(showspin){
-        spin = true// THIS MAKES IT STATE???????
-        console.log("Showing the spinner on the graph")
-      }
-    }
 
     componentWillReceiveProps(nextprop){
       console.log("getting data", nextprop)
 
-
-      if(nextprop.showSpinner!== this.props.showSpinner){
-        this.toggleSpinner(nextprop.showSpinner)
-      }
-
       if((nextprop.graphData !== this.props.graphData)&&(nextprop.graphData[0][0]&&nextprop.graphData[1][0])){
         this.updateData(nextprop)
-        spin = false
-         console.log("Removing the spinner", nextprop)
       }
     }
 
@@ -130,13 +116,13 @@ export default class GraphBox extends Component {
 
 
     render() {
-      const { graphData, showSpinner } = this.props
+      const { graphData, isFetching } = this.props
       
       //console.log("Rendering the graph", spin, this.spin, this.props.showSpinner)
 
       return (
         <div className={"graph-box panel-body"}>
-        {spin &&
+        {isFetching &&
           <div className="spinner">
             <Loader color="#26A65B" size="16px" margin="4px"/>
             <span className="sr-only">Loading...</span>
@@ -149,5 +135,5 @@ export default class GraphBox extends Component {
 
   GraphBox.propTypes = {
     graphData: PropTypes.array.isRequired,
-    showSpinner: PropTypes.bool.isRequired
+    isFetching: PropTypes.bool.isRequired
   }
