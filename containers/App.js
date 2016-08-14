@@ -52,7 +52,7 @@ class App extends Component {
     dispatch(fetchAPIData('http://localhost:8888/tvgrid-redux/api/getweeklyratings/?net%5B%5D='+this.props.selectedNetwork+'&metric=aa&stream%5B%5D=lsd&demo%5B%5D=p2_17&starttime='+this.props.selectedWeek+'&weeks=7', 'Weekly7-P2_17-LSD'))
     dispatch(fetchAPIData('http://localhost:8888/tvgrid-redux/api/getaverage?net='+this.props.selectedNetwork+'&metric=imp&demo=p2&starttime='+this.props.selectedWeek+'&stream=l7d&weeks=1', 'Week1-P2-L7D-IMP'))
     dispatch(fetchAPIData('http://localhost:8888/tvgrid-redux/api/getaverage?net='+this.props.selectedNetwork+'&metric=imp&demo=p2&starttime='+this.props.selectedWeek+'&stream=l7d&weeks=6', 'Week6-P2-L7D-IMP'))//THIS NEEDS TO exclude the current week
-    dispatch(fetchAPIData('http://rockthecatzva.com/slim-tracker/api/getweeklylist/?net=FAKENET&metrics%5B%5D=aa&streams%5B%5D=lsd&demos%5B%5D=p25_54&demos%5B%5D=w25_54&starttime=2014-12-22&weeks=1', 'Weekly-Telecast-List'))
+    dispatch(fetchAPIData('http://rockthecatzva.com/slim-tracker/api/getweeklylist/?net='+this.props.selectedNetwork+'&metrics%5B%5D=aa&streams%5B%5D=lsd&demos%5B%5D=p25_54&demos%5B%5D=w25_54&starttime='+this.props.selectedWeek+'&weeks=1', 'Weekly-Telecast-List'))
   }
 
   render() {
@@ -92,6 +92,13 @@ class App extends Component {
       </div>
       
   
+      <div className="row">
+        <div className="col-sm-12 panel panel-default">
+          <TelecastRankerBox telecastData={(ratings['Weekly-Telecast-List'])?ratings['Weekly-Telecast-List']['data']:[0]} isFetching={(ratings['Weekly-Telecast-List'])?(ratings['Weekly-Telecast-List']['isFetching']):true} />
+        </div>      
+      </div>
+
+
       </div>
     )
   }

@@ -6,7 +6,7 @@ export default class Picker extends Component {
 
     return (
       <span>
-        <select onChange={e => onChange(e.target.value)}
+        <select className="form-control" onChange={e => onChange(e.target.value)}
                 value={value}>
           {options.map(option =>
             <option value={option} key={option}>
