@@ -17,6 +17,7 @@ constructor(props) {
 
 
   render() {
+    console.log("Rendering COMPARISON BOX")
 
     const { value1, value2, label1, round, isFetching} = this.props
     var diff

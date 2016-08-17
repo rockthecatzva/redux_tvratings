@@ -16,6 +16,7 @@ function selectedReddit(state = 'reactjs', action) {
 function selectedNetwork(state='init1', action){
   switch (action.type){
     case RECEIVE_NETS:
+      return action.selectedNetwork
     case SELECT_NETWORK:
       return action.selectedNetwork
     default:
@@ -26,6 +27,7 @@ function selectedNetwork(state='init1', action){
 function selectedWeek(state='def1', action){
   switch(action.type){
     case RECEIVE_WEEKS:
+      return action.selectedWeek
     case SELECT_WEEK:
       return action.selectedWeek
     default:
@@ -127,25 +129,23 @@ function postsByReddit(state = { }, action) {
 }
 */
 
-function nets(state={nets:[], selectedNetwork:'init2'}, action){
+function nets(state={nets:[]}, action){
   switch(action.type){
     case RECEIVE_NETS:
       console.log("reducer - nets", action)
       return Object.assign({}, state, {
-        nets: action.nets,
-        selectedNetwork: selectedNetwork(state[action.selectedNetwork], action)
+        nets: action.nets
       })
     default:
       return state;
   }
 }
 
-function weeks(state={weeks:[], selectedWeek: 'def2'}, action){
+function weeks(state={weeks:[]}, action){
   switch(action.type){
     case RECEIVE_WEEKS:
       return Object.assign({}, state, {
-        weeks: action.weeks,
-        selectedWeek: selectedWeek(state[action.selectedWeek], action)
+        weeks: action.weeks
       })
     default:
     return state;

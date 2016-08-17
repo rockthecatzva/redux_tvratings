@@ -16,7 +16,7 @@ export default class GraphBox extends Component {
     var x = d3.scaleLinear().domain([0, data.graphData[0].length-1]).range([MARGIN, width-MARGIN])
     var max = 0
 
-    console.log("did this fix", data.graphData)
+    //console.log("did this fix", data.graphData)
 
     {data.graphData.map(function(arr){
       //console.log(arr, "is the error here?")
@@ -97,8 +97,14 @@ export default class GraphBox extends Component {
     componentWillReceiveProps(nextprop){
       console.log("getting data", nextprop)
 
+      //this will only handle 2 lines, not 1 and not 2+ but 2 - need to rethink this
       if((nextprop.graphData !== this.props.graphData)&&(nextprop.graphData[0][0]&&nextprop.graphData[1][0])){
         this.updateData(nextprop)
+
+        //THE ISSUE IS THAT GRAPH AND TABLES ARE RECIEVING THE SAME DATA AGAIN 
+        //NEED TO MAKE THEM IGNORE IT UNLESS THE SUBMIT BUTTON HAS BEEN PRESSED
+        //IM STILL NOT SURE WHY ITS GETTING FIRED SIMPLY BY CHANIGN NET OR WEEK
+        console.log("ITS DIFFERENT DATA TOO!!", nextprop.graphData, this.props.graphData, (nextprop.graphData==this.props.graphData))
       }
     }
 
