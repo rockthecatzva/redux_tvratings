@@ -18,10 +18,10 @@ if(isset($_FILES['uploaded_file'])) {
         // Create the SQL query
         $t = $_FILES  ['uploaded_file']['tmp_name'];
         
-        echo $t;
+        //echo $t;
         // Execute the query
         //$result = $dbLink->query($query);
-        if($_FILES['uploaded_file']['error']==0) echo "Initial check success<br/>".file_get_contents($_FILES  ['uploaded_file']['tmp_name'])."<br/>";
+        if($_FILES['uploaded_file']['error']==0) echo "Initial check success<br/>";
 
         //if ( !move_uploaded_file($t, "/uploads/") )
           //  echo "Could not copy CSV file to temporary directory ready for importing.";
@@ -34,7 +34,7 @@ if(isset($_FILES['uploaded_file'])) {
                    LINES TERMINATED BY '\\n' 
                  (@dummy, net, date, period, @dummy, type, stream, demo, rating_val, duration);";
 
-                   echo $sql;
+                   //echo $sql;
 
             $con=mysqli_connect("localhost","root","root","AutoTracker");
             // Check connection

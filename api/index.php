@@ -276,6 +276,108 @@ $app->get('/grocery/', function () {
 */
 
 
+/*
+------------- TIMEBASED_DATA --------------------
+
+SELECT month.month, month.year, rat.net, rat.type, rat.stream, rat.demo, SUM( rat.rating_val * rat.duration ) / SUM( rat.duration ) as rating_val, SUM(rat.duration) as duration 
+FROM timebased_data rat  
+JOIN bcast_months month on (rat.date>=month.start AND rat.date<=month.stop) 
+WHERE (rat.net = 'DISC' AND rat.demo="p25_54" AND rat.type="aa") 
+GROUP BY rat.net, month.month, month.year, rat.type, rat.stream, rat.demo 
+ORDER BY month.start;
+*/
+
+$app->get('/getTimedata/', function () {
+    $app = \Slim\Slim::getInstance();
+    $nets = $app->request->get('nets');
+    $streams = $app->request->get('streams');
+    $metric = $app->request->get('metric');
+    $demos = $app->request->get('demos');
+    //$starttime = $app->request->get('starttime');
+    //$weeks = $app->request->get('weeks');
+
+    try 
+    {       
+        //select tr.rating_type, SUM( tr.rating_val * ti.duration ) / SUM( ti.duration ) as rating_val, SUM(ti.duration) as duration  FROM telecast_info ti  LEFT JOIN telecast_ratings tr ON tr.net = ti.net AND tr.date_time =ti.date_time WHERE (tr.net="DISC" AND tr.rating_type="m25_54 skew");
+        $db = getDB();
+        $qry = 'SELECT month.month, month.year, rat.net, rat.type, rat.stream, rat.demo, SUM( rat.rating_val * rat.duration ) / SUM( rat.duration ) as rating_val, SUM(rat.duration) as duration 
+                    FROM timebased_data rat  
+                    JOIN bcast_months month on (rat.date>=month.start AND rat.date<=month.stop) 
+                    WHERE ';
+
+         if(is_array($nets)){
+                $len = count($nets) - 1;
+                $select = '(';
+                    foreach ($nets as $i => $net) {
+                        $select = $select.'rat.net = "'.$net.'" ';
+                        if($i < $len){
+                            $select = $select.'OR ';
+                        }
+                    }    
+                    $select = $select.') ';
+
+            }
+            else{
+                $select = 'rat.net = "'.$nets.'" ';
+        }
+
+
+        
+
+
+        $qry = $qry.$select.' AND rat.demo="p25_54" AND rat.type="'.$metric.'" 
+                    GROUP BY rat.net, month.month, month.year, rat.type, rat.stream, rat.demo 
+                    ORDER BY month.start;';
+
+        //echo $qry;
+
+        $sth = $db->prepare($qry);
+        $sth->execute();
+        $data = $sth->fetchAll(PDO::FETCH_ASSOC);//(PDO::FETCH_OBJ);
+
+        if($data) {
+            $app->response->setStatus(200);
+            $app->response()->headers->set('Content-Type', 'application/json');
+
+
+            //sort the data into seperate arrays - for each combo of demo/stream/net/
+            $finalSet = array();
+
+            foreach ($data as $i => $tempval) {
+                # code...
+                //echo $tempval['net'];
+                $found = false;
+                foreach ($finalSet as $b => $finalval) {
+                    if(($finalval[0]['net']==$tempval['net'])&&($finalval[0]['stream']==$tempval['stream'])&&($finalval[0]['demo']==$tempval['demo'])){
+                        $found= true;
+                        //echo "FOUND!!!!".$finalval[0]['net']." ".$tempval['net'];
+                        $finalSet[$b][] = $tempval;
+                    }
+                }
+
+                if(!$found){
+                    $finalSet[]=array($tempval);
+                    $found = false;
+                }
+            }
+
+            //echo gettype($data);
+
+            //echo json_encode(utf8ize($data));
+            echo json_encode(utf8ize($finalSet));
+            $db = null;
+        } else {
+            throw new PDOException('No records found.');
+        }            
+        
+    } catch(PDOException $e) {
+        $app->response()->setStatus(404);
+        echo '{"error":{"text":'. $e->getMessage() .'}}';
+    }
+});
+
+
+
 $app->get('/getaverage/', function () {
     $app = \Slim\Slim::getInstance();
     $net = $app->request->get('net');
@@ -565,6 +667,37 @@ $sth->execute();
 });
 
 
+
+
+
+$app->get('/updateAverages/', function () {
+    $app = \Slim\Slim::getInstance();
+    //$net = $app->request->get('net');
+
+    try 
+    {       
+
+        //select tr.rating_type, SUM( tr.rating_val * ti.duration ) / SUM( ti.duration ) as rating_val, SUM(ti.duration) as duration  FROM telecast_info ti  LEFT JOIN telecast_ratings tr ON tr.net = ti.net AND tr.date_time =ti.date_time WHERE (tr.net="DISC" AND tr.rating_type="m25_54 skew");
+
+        $db = getDB();
+        $sth = $db->prepare("SELECT ROUND(SUM( tr.rating_val * ti.duration ) / SUM( ti.duration ), 1) as val FROM telecast_info ti  LEFT JOIN telecast_ratings tr ON tr.net = ti.net AND tr.date_time =ti.date_time;");
+        $sth->execute();
+        $data = $sth->fetchAll(PDO::FETCH_ASSOC);//(PDO::FETCH_OBJ);
+
+        if($data) {
+            $app->response->setStatus(200);
+            $app->response()->headers->set('Content-Type', 'application/json');
+            echo json_encode(utf8ize($data));
+            $db = null;
+        } else {
+            throw new PDOException('No records found.');
+        }            
+        
+    } catch(PDOException $e) {
+        $app->response()->setStatus(404);
+        echo '{"error":{"text":'. $e->getMessage() .'}}';
+    }
+});
 
 
 
