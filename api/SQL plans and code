@@ -1,0 +1,121 @@
+----------- Tuning database -------------------
+
+DROP TABLE IF EXISTS `weekly_tuning`;
+CREATE TABLE `weekly_tuning` (
+  `ID` int(11) NOT NULL,
+  `net` varchar(8) DEFAULT NULL,
+  `startdate` datetime DEFAULT NULL,
+  `demo` varchar(20) DEFAULT NULL,
+  `stream` varchar(8) DEFAULT NULL,
+  `reach_aa` decimal(7,2) DEFAULT NULL,
+  `reach_imp` decimal(7,2) DEFAULT NULL,
+  `freq` decimal(7,2) DEFAULT NULL,
+  `mins_viewed` decimal(7,2) DEFAULT NULL,
+  `duration` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+ALTER TABLE `weekly_tuning`
+ ADD UNIQUE KEY `unique_index` (`net`,`startdate`,`stream`,`demo`), ADD KEY `ID` (`ID`);
+
+
+
+- getweeks (ALREADY EXISTS!!!!)
+- getMonths (needs to return a # of weeks count!!!)
+- getYears (needs to return a # of weeks count!!!)
+- getPROneSheet
+  - combines all dbs: telecasts, dayparts, tuning
+
+
+
+Time-Based API needs:
+- by year, qtr, month, week, day
+- by network
+- for these demos
+- time-series or straight up avg
+
+
+reqTimeSeriesByNet ()
+  - nets = []
+  - start
+  - stop? (optional)
+  - interval (wkly/monthly/qtrly/yrly)
+  - daypart (prime or total day)
+  - demos = []
+  - type = "ratings"
+
+reqYAGORatingsComps
+ - nets = []
+ - current = wk/month/qtr/yr?
+ - yago = wk/month/qtr/yr?
+ -
+
+
+//get a ranker of Prime??? ratings?
+SELECT net, rating_val, duration FROM ag_dayparts WHERE (type="aa" AND stream="l3d" AND demo="p25_54" AND period="1Q16") ORDER BY rating_val DESC;
+
+//get a qtrly premiere average
+SELECT net, rating_val, (duration/60) as duration FROM ag_premavgs WHERE (type="aa" AND stream="lsd" AND demo="p25_54" AND period="1Q14") ORDER BY rating_val DESC;
+
+-------- AG_DAYPARTS --------------------
+
+DROP TABLE IF EXISTS `daypart_ratings`;
+CREATE TABLE daypart_ratings
+(
+`ID` int(11) NOT NULL,
+  `net` varchar(8) DEFAULT NULL,
+  `date` datetime DEFAULT NULL,
+  `period` varchar(20) DEFAULT NULL,
+  `type` varchar(8) DEFAULT NULL,
+  `stream` varchar(8) DEFAULT NULL,
+  `demo` varchar(20) DEFAULT NULL,
+  `rating_val` decimal(7,2) DEFAULT NULL,
+  `duration` datetime DEFAULT NULL
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=9 ;
+
+ALTER TABLE `daypart_ratings` ADD UNIQUE `unique_index`(`net`, `date`, `period`, `type`, `stream`, `demo`);
+
+
+
+  REPLACE INTO ag_dayparts (net, type, stream, demo, daypart, rating_val, duration, period)
+    SELECT net, type, stream, demo, daypart, avg(rating_val) AS rating_val, sum(duration) AS duration, qtrs.label as period FROM timebased_data LEFT JOIN bcast_quarters as qtrs ON (date>=qtrs.start and date<=qtrs.stop) GROUP BY net, type, demo, stream, period, daypart;
+
+
+    DROP TABLE IF EXISTS `ag_dayparts`;
+    CREATE TABLE `ag_dayparts` (
+      `ID` int(11) NOT NULL,
+      `net` varchar(8) DEFAULT NULL,
+      `daypart` varchar(20) DEFAULT NULL,
+      `period` varchar(20) DEFAULT NULL,
+      `type` varchar(8) DEFAULT NULL,
+      `stream` varchar(8) DEFAULT NULL,
+      `demo` varchar(20) DEFAULT NULL,
+      `rating_val` decimal(7,2) DEFAULT NULL,
+      `duration` int(11) DEFAULT NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+    ALTER TABLE `ag_dayparts`
+     ADD UNIQUE KEY `unique_index` (`net`,`daypart`,`period`,`type`,`stream`,`demo`), ADD KEY `ID` (`ID`);
+
+
+-------- AG_PREMAVGS --------------------
+DROP TABLE IF EXISTS `ag_premavgs`;
+CREATE TABLE `ag_premavgs` (
+  `ID` int(11) NOT NULL,
+  `net` varchar(8) DEFAULT NULL,
+  `period` varchar(20) DEFAULT NULL,
+  `type` varchar(8) DEFAULT NULL,
+  `stream` varchar(8) DEFAULT NULL,
+  `demo` varchar(20) DEFAULT NULL,
+  `rating_val` decimal(7,2) DEFAULT NULL,
+  `duration` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+ALTER TABLE `ag_premavgs`
+ ADD UNIQUE KEY `unique_index` (`net`,`period`,`type`,`stream`,`demo`), ADD KEY `ID` (`ID`);
+
+ REPLACE INTO ag_premavgs (net, period, type, stream, demo, rating_val, duration)
+ SELECT tr.net as net, qtrs.label as period, tr.rating_type as type, tr.data_stream as stream, tr.demo as demo, SUM( tr.rating_val * ti.duration ) / SUM( ti.duration ) AS rating_val, SUM(ti.duration) as duration
+     FROM telecast_info ti
+     LEFT JOIN telecast_ratings tr ON tr.net = ti.net AND tr.date_time =ti.date_time
+     LEFT JOIN bcast_quarters as qtrs ON (tr.date_time>=qtrs.start and tr.date_time<=qtrs.stop)
+     WHERE (ti.telecast_code NOT LIKE '%R%')
+     GROUP BY net, type, demo, stream, period;

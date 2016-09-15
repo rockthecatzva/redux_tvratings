@@ -4,7 +4,16 @@ if(isset($_FILES['uploaded_file'])) {
     // Make sure the file was sent without errors
     if($_FILES['uploaded_file']['error'] == 0) {
         // Connect to the database
-        $dbLink = new mysqli('localhost', 'root', 'root', 'AutoTracker');
+
+        $dbname = 'localhost';
+        $dbuser = 'root';
+        //$dbpass = 'd1sc0v3ry';
+        $dbpass = 'root';
+        $db = 'AutoTracker';
+
+        $dbLink = new mysqli($dbname, $dbuser, $dbpass, $db);
+        //$dbLink = new mysqli('localhost', 'root', 'd1sc0v3ry', 'AutoTracker');
+
         if(mysqli_connect_errno()) {
             die("MySQL connection failed: ". mysqli_connect_error());
         }
@@ -26,33 +35,32 @@ if(isset($_FILES['uploaded_file'])) {
         //if ( !move_uploaded_file($t, "/uploads/") )
           //  echo "Could not copy CSV file to temporary directory ready for importing.";
 
-        //$query = $this->db->query("LOAD DATA INFILE ? REPLACE INTO TABLE timebased_data FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\\n' (@dummy, net, date, period, type, stream, demo, value, duration)",array('/tmp/'.$file));
                     $sql = "LOAD DATA LOCAL INFILE '".$t."'
-                   INTO TABLE AutoTracker.timebased_data
+                   INTO TABLE daypart_ratings
                    FIELDS TERMINATED BY ','
                    OPTIONALLY ENCLOSED BY '\"'
                    LINES TERMINATED BY '\\n'
-                 (@dummy, net, date, period, @dummy, type, stream, demo, rating_val, duration);";
+                 (@dummy, net, date, daypart, @dummy, type, stream, demo, rating_val, duration);";
 
                    //echo $sql;
 
-            $con=mysqli_connect("localhost","root","root","AutoTracker");
+            $dbLink = new mysqli($dbname, $dbuser, $dbpass, $db);
             // Check connection
             if (mysqli_connect_errno()) {
-              echo "Failed to connect to MySQL: " . mysqli_connect_error();
+              echo "Failed to connect to MySQL: " . mysqli_connect_errno() . mysqli_connect_error();
             };
 
-            $result = mysqli_query($con, $sql);
+            $result = mysqli_query($dbLink, $sql);
 
             if ($result) {
               $message = "The data was successfully added!";
             } else {
               $message = "The user update failed: ";
-              $message .= mysqli_error($con);
+              $message .= mysqli_error($dbLink)." ---> ".$result;
             };
 
             echo $message;
-            mysqli_close($con);
+            mysqli_close($dbLink);
 
     }
     else {
@@ -61,7 +69,7 @@ if(isset($_FILES['uploaded_file'])) {
     }
 
     // Close the mysql connection
-    $dbLink->close();
+    //$dbLink->close();
 }
 else {
     echo 'Error! A file was not sent!';
