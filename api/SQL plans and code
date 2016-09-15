@@ -4,7 +4,7 @@ DROP TABLE IF EXISTS `weekly_tuning`;
 CREATE TABLE `weekly_tuning` (
   `ID` int(11) NOT NULL,
   `net` varchar(8) DEFAULT NULL,
-  `startdate` datetime DEFAULT NULL,
+  `date` datetime DEFAULT NULL,
   `demo` varchar(20) DEFAULT NULL,
   `stream` varchar(8) DEFAULT NULL,
   `reach_aa` decimal(7,2) DEFAULT NULL,
@@ -15,7 +15,7 @@ CREATE TABLE `weekly_tuning` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 ALTER TABLE `weekly_tuning`
- ADD UNIQUE KEY `unique_index` (`net`,`startdate`,`stream`,`demo`), ADD KEY `ID` (`ID`);
+ ADD UNIQUE KEY `unique_index` (`net`,`date`,`stream`,`demo`), ADD KEY `ID` (`ID`);
 
 
 
