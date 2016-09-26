@@ -14,8 +14,8 @@ class App extends Component {
     this.handleNetChange = this.handleNetChange.bind(this)
     this.handleWeekChange = this.handleWeekChange.bind(this)
     this.handleSubmitClick = this.handleSubmitClick.bind(this)
-    
-  }  
+
+  }
 
   componentDidMount() {
     const { dispatch, nets, selectedNetwork } = this.props
@@ -43,7 +43,7 @@ class App extends Component {
     this.props.dispatch(selectWeek(nextWk))
   }
 
-  
+
   handleSubmitClick(e){
     e.preventDefault()
     const{dispatch} = this.props
@@ -52,12 +52,12 @@ class App extends Component {
     dispatch(fetchAPIData('http://localhost:8888/tvgrid-redux/api/getweeklyratings/?net%5B%5D='+this.props.selectedNetwork+'&metric=aa&stream%5B%5D=lsd&demo%5B%5D=p2_17&starttime='+this.props.selectedWeek+'&weeks=7', 'Weekly7-P2_17-LSD'))
     dispatch(fetchAPIData('http://localhost:8888/tvgrid-redux/api/getaverage?net='+this.props.selectedNetwork+'&metric=imp&demo=p2&starttime='+this.props.selectedWeek+'&stream=l7d&weeks=1', 'Week1-P2-L7D-IMP'))
     dispatch(fetchAPIData('http://localhost:8888/tvgrid-redux/api/getaverage?net='+this.props.selectedNetwork+'&metric=imp&demo=p2&starttime='+this.props.selectedWeek+'&stream=l7d&weeks=6', 'Week6-P2-L7D-IMP'))//THIS NEEDS TO exclude the current week
-    dispatch(fetchAPIData('http://rockthecatzva.com/slim-tracker/api/getweeklylist/?net='+this.props.selectedNetwork+'&metrics%5B%5D=aa&streams%5B%5D=lsd&demos%5B%5D=p25_54&demos%5B%5D=w25_54&starttime='+this.props.selectedWeek+'&weeks=1', 'Weekly-Telecast-List'))
+    dispatch(fetchAPIData('http://localhost:8888/tvgrid-redux/api/getweeklylist/?net='+this.props.selectedNetwork+'&metrics%5B%5D=aa&streams%5B%5D=lsd&demos%5B%5D=p25_54&demos%5B%5D=w25_54&starttime='+this.props.selectedWeek+'&weeks=1', 'Weekly-Telecast-List'))
   }
 
   render() {
     const { nets, selectedNetwork, selectedWeek, weeks, ratings } = this.props
-    
+
     //var rat = ratings['Week1-P2-L7D-IMP'];
     //console.log("check this", rat)
 
@@ -72,9 +72,9 @@ class App extends Component {
 
           <Picker value={selectedWeek}
                   onChange={this.handleWeekChange}
-                  options={weeks.weeks} /> 
+                  options={weeks.weeks} />
         </div>
-      </div>  
+      </div>
 
       <div className="row">
         <button type="button" onClick={this.handleSubmitClick} >Submit</button>
@@ -88,14 +88,14 @@ class App extends Component {
       <div className="row">
         <div className="col-sm-5 panel panel-default">
           <GraphBox height={300} width={500} graphData={(ratings['Weekly7-P55-LSD']&&ratings['Weekly7-P2_17-LSD'])?[ratings['Weekly7-P55-LSD']['data'], ratings['Weekly7-P2_17-LSD']['data']]:[0]} isFetching={(ratings['Weekly7-P2_17-LSD']&&ratings['Weekly7-P55-LSD'])?(ratings['Weekly7-P2_17-LSD']['isFetching']&&ratings['Weekly7-P55-LSD']['isFetching']):true} />
-        </div>      
+        </div>
       </div>
-      
-  
+
+
       <div className="row">
         <div className="col-sm-12 panel panel-default">
           <TelecastRankerBox telecastData={(ratings['Weekly-Telecast-List'])?ratings['Weekly-Telecast-List']['data']:[0]} isFetching={(ratings['Weekly-Telecast-List'])?(ratings['Weekly-Telecast-List']['isFetching']):true} />
-        </div>      
+        </div>
       </div>
 
 

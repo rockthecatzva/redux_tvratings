@@ -2,27 +2,23 @@
 
 // Connect to the database
   $dbLink = new mysqli('localhost', 'root', 'root', 'AutoTracker');
+  //$dbLink = new mysqli('localhost', 'root', 'd1sc0v3ry', 'AutoTracker');
   if(mysqli_connect_errno()) {
     die("MySQL connection failed: ". mysqli_connect_error());
   }
-  $con=mysqli_connect("localhost","root","root","AutoTracker");
-  // Check connection
-  if (mysqli_connect_errno()) {
-    echo "Failed to connect to MySQL: " . mysqli_connect_error();
-  };
 
 //UPDATE DAYPART AVERAGES
   $sql = "REPLACE INTO ag_dayparts (net, type, stream, demo, daypart, rating_val, duration, period) SELECT net, type, stream, demo, daypart, avg(rating_val) AS rating_val, sum(duration) AS duration, qtrs.label as period FROM daypart_ratings LEFT JOIN bcast_quarters as qtrs ON (date>=qtrs.start and date<=qtrs.stop) GROUP BY net, type, demo, stream, period, daypart;";
 
 
 
-  $result = mysqli_query($con, $sql);
+  $result = mysqli_query($dbLink, $sql);
 
   if ($result) {
     $message = "The data was successfully added!";
   } else {
     $message = "The user update failed: ";
-    $message .= mysqli_error($con);
+    $message .= mysqli_error($dbLink);
   };
 
   echo $message;
@@ -37,22 +33,22 @@
       WHERE (ti.telecast_code NOT LIKE '%R%')
       GROUP BY net, type, demo, stream, period;";
 
-  $result = mysqli_query($con, $sql);
+  $result = mysqli_query($dbLink, $sql);
 
   if ($result) {
     $message = "The data was successfully added!";
   } else {
     $message = "The user update failed: ";
-    $message .= mysqli_error($con);
+    $message .= mysqli_error($dbLink);
   };
 
   echo $message;
 
 
 
-  mysqli_close($con);
+  mysqli_close($dbLink);
 
   // Close the mysql connection
-  $dbLink->close();
+  //$dbLink->close();
 
 ?>

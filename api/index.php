@@ -615,6 +615,46 @@ echo "Success";
 
 
 
+
+$app->get('/getQTD/', function () {
+  $app = \Slim\Slim::getInstance();
+  //$qtr = $app->request->get('qtr');
+
+  try
+  {
+    $db = getDB();
+    $sth = $db->prepare("SELECT
+      @num:=DATEDIFF(maxtable.maxdate, bq.start),
+      label, bq.year, bq.qtr, bq.start, maxtable.maxdate, yagot.yagostart, @num as daysin, yagot.yagostop
+    FROM bcast_quarters bq
+      INNER JOIN (select max(date) as maxdate
+      FROM daypart_ratings) maxtable
+        ON (maxtable.maxdate>=bq.start AND maxtable.maxdate<=bq.stop)
+      INNER JOIN (SELECT year+1 AS yagoyear, start AS yagostart, DATE_ADD(start, INTERVAL @num DAY) AS yagostop, qtr
+      FROM bcast_quarters) yagot
+        ON (bq.year =yagot.yagoyear AND bq.qtr=yagot.qtr);");
+    $sth->execute();
+    $data = $sth->fetchAll(PDO::FETCH_ASSOC);//(PDO::FETCH_OBJ);
+
+    if($data) {
+      $app->response->setStatus(200);
+      $app->response()->headers->set('Content-Type', 'application/json');
+      echo json_encode(utf8ize($data));
+      $db = null;
+
+    } else {
+      throw new PDOException('No records found.');
+    }
+
+  } catch(PDOException $e) {
+    $app->response()->setStatus(404);
+    echo '{"error":{"text":'. $e->getMessage() .'}}';
+  }
+});
+
+
+
+
 $app->get('/getskew/', function () {
   $app = \Slim\Slim::getInstance();
   $net = $app->request->get('net');

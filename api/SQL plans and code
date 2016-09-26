@@ -8,7 +8,7 @@ CREATE TABLE `weekly_tuning` (
   `demo` varchar(20) DEFAULT NULL,
   `stream` varchar(8) DEFAULT NULL,
   `reach_aa` decimal(7,2) DEFAULT NULL,
-  `reach_imp` decimal(7,2) DEFAULT NULL,
+  `reach_imp` int(15) DEFAULT NULL,
   `freq` decimal(7,2) DEFAULT NULL,
   `mins_viewed` decimal(7,2) DEFAULT NULL,
   `duration` int(11) DEFAULT NULL
@@ -16,6 +16,33 @@ CREATE TABLE `weekly_tuning` (
 
 ALTER TABLE `weekly_tuning`
  ADD UNIQUE KEY `unique_index` (`net`,`date`,`stream`,`demo`), ADD KEY `ID` (`ID`);
+
+
+ DROP TABLE IF EXISTS `ag_weeklytuning`;
+ CREATE TABLE `ag_weeklytuning` (
+   `ID` int(11) NOT NULL,
+   `net` varchar(8) DEFAULT NULL,
+   `stream` varchar(8) DEFAULT NULL,
+   `period` varchar(20) DEFAULT NULL,
+   `demo` varchar(20) DEFAULT NULL,
+   `reach_aa` decimal(7,2) DEFAULT NULL,
+   `reach_imp` int(15) DEFAULT NULL,
+   `freq` decimal(7,2) DEFAULT NULL,
+   `mins_viewed` decimal(7,2) DEFAULT NULL,
+   `duration` int(11) DEFAULT NULL
+ ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+ ALTER TABLE `ag_weeklytuning`
+  ADD UNIQUE KEY `unique_index` (`net`,`period`,`stream`,`demo`), ADD KEY `ID` (`ID`);
+
+  REPLACE INTO ag_weeklytuning (net, stream, demo, reach_aa, reach_imp, freq, mins_viewed, duration, period)
+    SELECT net, stream, demo, avg(reach_aa) AS reach_aa, avg(reach_imp) AS reach_imp, avg(freq) AS freq, avg(mins_viewed) AS mins_viewed, sum(duration) AS duration, qtrs.label as period FROM weekly_tuning LEFT JOIN bcast_quarters as qtrs ON (date>=qtrs.start and date<=qtrs.stop) GROUP BY net, demo, stream, period;
+
+
+
+
+
+
 
 
 
@@ -64,15 +91,15 @@ CREATE TABLE daypart_ratings
 `ID` int(11) NOT NULL,
   `net` varchar(8) DEFAULT NULL,
   `date` datetime DEFAULT NULL,
-  `period` varchar(20) DEFAULT NULL,
+  `daypart` varchar(20) DEFAULT NULL,
   `type` varchar(8) DEFAULT NULL,
   `stream` varchar(8) DEFAULT NULL,
   `demo` varchar(20) DEFAULT NULL,
   `rating_val` decimal(7,2) DEFAULT NULL,
-  `duration` datetime DEFAULT NULL
+  `duration` int(11) DEFAULT NULL
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=9 ;
 
-ALTER TABLE `daypart_ratings` ADD UNIQUE `unique_index`(`net`, `date`, `period`, `type`, `stream`, `demo`);
+ALTER TABLE `daypart_ratings` ADD UNIQUE `unique_index`(`net`, `date`, `daypart`, `type`, `stream`, `demo`);
 
 
 
@@ -119,3 +146,76 @@ ALTER TABLE `ag_premavgs`
      LEFT JOIN bcast_quarters as qtrs ON (tr.date_time>=qtrs.start and tr.date_time<=qtrs.stop)
      WHERE (ti.telecast_code NOT LIKE '%R%')
      GROUP BY net, type, demo, stream, period;
+
+
+
+
+-------------------------------------------
+CREATE TABLE `bcast_years` (
+`ID` int(11) NOT NULL,
+  `label` varchar(4) DEFAULT NULL,
+  `start` datetime DEFAULT NULL,
+  `stop` datetime DEFAULT NULL
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=17 ;
+
+
+INSERT INTO `bcast_years` (`ID`, `label`, `start`, `stop`) VALUES
+(0, '2012', '2011-12-26 00:00:00', '2012-12-30 23:59:59'),
+(1, '2013', '2012-12-31 00:00:00', '2013-12-29 23:59:59'),
+(2, '2014', '2013-12-30 00:00:00', '2014-12-28 23:59:59'),
+(3, '2015', '2014-12-29 00:00:00', '2015-12-27 23:59:59'),
+(4, '2016', '2015-12-28 00:00:00', '2016-12-25 23:59:59'),
+(5, '2017', '2016-12-26 00:00:00', '2017-12-30 23:59:59');
+
+ALTER TABLE `bcast_years`
+ ADD PRIMARY KEY (`ID`);
+ALTER TABLE `bcast_years`
+MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=17;
+
+
+----------------------------------------------------------
+----- NECESSARY UPDATES TO TABLE -------------------------
+ALTER TABLE ag_dayparts MODIFY COLUMN ID INT auto_increment;
+ALTER TABLE ag_premavgs MODIFY COLUMN ID INT auto_increment;
+
+ALTER TABLE daypart_ratings DROP COLUMN ID;
+ALTER TABLE daypart_ratings ADD id INT NOT NULL AUTO_INCREMENT PRIMARY KEY;
+
+ALTER TABLE weekly_tuning DROP COLUMN ID;
+ALTER TABLE weekly_tuning ADD id INT NOT NULL AUTO_INCREMENT PRIMARY KEY;
+
+ALTER TABLE bcast_quarters ADD year int;
+ALTER TABLE bcast_quarters ADD qtr int;
+
+
+
+//CodeIgniter-Version Upload Scripts
+INSERT INTO cleanlist_series (dirty_name) SELECT DISTINCT telecast_name FROM telecast_info;";
+UPDATE cleanlist_series SET clean_name=dirty_name WHERE clean_name IS NULL;
+INSERT INTO netlist (net) SELECT DISTINCT net FROM telecast_info;
+
+
+
+This works (Find last day in daypart_ratings, figure out the quarter and the YAGO QTD equivalent):
+  SELECT
+    @num:=DATEDIFF(maxtable.maxdate, bq.start),
+    label, bq.year, bq.qtr, bq.start, maxtable.maxdate, DATEDIFF(maxtable.maxdate, bq.start) AS daysin, yagot.yagostart, yagot.yagostop
+  FROM bcast_quarters bq
+    INNER JOIN (select max(date) as maxdate
+    FROM daypart_ratings) maxtable
+      ON (maxtable.maxdate>=bq.start AND maxtable.maxdate<=bq.stop)
+    INNER JOIN (SELECT year+1 AS yagoyear, start AS yagostart, DATE_ADD(start, INTERVAL @num DAY) AS yagostop, qtr
+    FROM bcast_quarters) yagot
+      ON (bq.year =yagot.yagoyear AND bq.qtr=yagot.qtr);
+
+
+      SELECT
+        @num:=DATEDIFF(maxtable.maxdate, bq.start),
+        label, bq.year, bq.qtr, bq.start, maxtable.maxdate, @num AS daysin, yagot.yagostart, yagot.yagostop
+      FROM bcast_quarters bq
+        INNER JOIN (select max(date) as maxdate, @num as test
+        FROM daypart_ratings) maxtable
+          ON (maxtable.maxdate>=bq.start AND maxtable.maxdate<=bq.stop)
+        INNER JOIN (SELECT year+1 AS yagoyear, start AS yagostart, DATE_ADD(start, INTERVAL @num DAY) AS yagostop, qtr
+        FROM bcast_quarters) yagot
+          ON (bq.year =yagot.yagoyear AND bq.qtr=yagot.qtr);

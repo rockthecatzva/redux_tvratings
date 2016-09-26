@@ -130,7 +130,7 @@ function fetchPosts(reddit) {
 export function fetchNets() {
   return dispatch => {
    // dispatch(requestNets)
-    return fetch('http://rockthecatzva.com/slim-tracker/api/getnets')
+    return fetch('http://localhost:8888/tvgrid-redux/api/getnets')
       .then(response => response.json())
       .then(json => dispatch(receiveNets(json)))
   }
@@ -139,7 +139,7 @@ export function fetchNets() {
 export function fetchWeeks() {
   return dispatch => {
     //dispatch(requestWeeks)
-    return fetch('http://rockthecatzva.com/slim-tracker/api/getweeks')
+    return fetch('http://localhost:8888/tvgrid-redux/api/getweeks')
       .then(response => response.json())
       .then(json => dispatch(receiveWeeks(json)))
   }
@@ -185,4 +185,3 @@ export function fetchPostsIfNeeded(reddit) {
     }
   }
 }
-
