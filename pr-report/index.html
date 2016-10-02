@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Web-based Portfolio Report - Protype 1.0</title>
+
+	<style>
+	@font-face {
+		font-family: bebas;
+		src: url("./fonts/BebasNeue Bold.otf")
+	}
+
+	@font-face {
+		font-family: opensans;
+		src: url("./fonts/OpenSans-Light.ttf")
+	}
+
+
+	svg{
+		position: absolute;
+		top: 0px;
+		left: 0px;
+		margin: auto;
+	}
+
+	.h1x{
+		height: 20em;
+	}
+
+	path {
+		stroke: steelblue;
+		stroke-width: 1;
+		fill: none;
+	}
+
+
+	.graph-box{
+		height: 400px;
+
+	}
+
+	.spinner{
+		width: 100%;
+		/* height: 90%; */
+		text-align: center;
+		/* padding-top: 40%; */
+		/* top: 0px; */
+		left: 0px;
+		position: absolute;
+		top: 40%;
+	}
+
+	.axis {
+		shape-rendering: crispEdges;
+	}
+	.x.axis line {
+		stroke: lightgrey;
+	}
+	.x.axis .minor {
+		stroke-opacity: .5;
+	}
+	.x.axis path {
+		stroke: black;
+	}
+	.y.axis line, .y.axis path {
+		fill: none;
+		stroke: #000;
+	}
+
+	.header-text, select {
+		font-family: bebas;
+		font-size: 2.8em;
+	}
+
+	.infobox-primaryval{
+		font-family: bebas;
+		font-size: 2.5em;
+		text-align: center;
+	}
+
+	.infobox-changeval{
+		float: right;
+		top: -2em;
+		position: relative;
+		font-size: 0.9em;
+		font-family: opensans;
+	}
+
+	.infobox-label{
+		font-family: opensans;
+		font-size: 0.9em;
+		text-align: center;
+	}
+
+	.red{
+		color: red;
+	}
+
+	.green{
+		color: green;
+	}
+	//////////////////////
+
+	.bar.total rect {
+		fill: steelblue;
+	}
+
+	.bar.positive rect {
+		fill: darkolivegreen;
+	}
+	.bar.negative rect {
+		fill: crimson;
+	}
+
+	.bar line.connector {
+		stroke: grey;
+		stroke-dasharray: 3;
+	}
+
+	.bar text {
+		fill: white;
+		font: 12px sans-serif;
+		text-anchor: middle;
+	}
+
+	.axis text {
+		font: 10px sans-serif;
+	}
+
+	.axis path,
+	.axis line {
+		fill: none;
+		stroke: #000;
+		shape-rendering: crispEdges;
+	}
+
+	.bar {
+		rx: 3;
+		ry: 3;
+		stroke: #8a8a8e;
+	}
+
+	.bg-circ{
+		fill: #ffffff;
+		stroke: #8a8a8e;
+	}
+
+	.APL{
+		fill: #34e57b;
+	}
+
+	.DISC{
+		fill: #0609a3;
+	}
+
+	.logo-DISC{
+
+	}
+
+
+
+	</style>
+
+	<script type="text/javascript" src="../node_modules/jquery/dist/jquery.min.js"></script>
+	<script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+	<script type="text/javascript">
+	$(document).ready(function(){
+		$.ajax({
+			url: "http://localhost:8888/tvgrid-redux/api/getQTD",
+			success: function(dat){
+				var yagostart = new Date(dat[0]["yagostart"]);
+				var yagostop = new Date(yagostart);
+				yagostop = new Date(yagostop.setDate(yagostart.getDate()+parseInt(dat[0]["daysin"])));
+				yagostart = yagostart.getFullYear()+"-"+(yagostart.getMonth()+1)+"-"+yagostart.getDate();
+				yagostop = yagostop.getFullYear()+"-"+(yagostop.getMonth()+1)+"-"+yagostop.getDate();
+
+				var currstart = new Date(dat[0]["start"]);
+				var currstop = new Date(currstart);
+				currstop = new Date(currstop.setDate(currstart.getDate()+parseInt(dat[0]["daysin"])));
+				currstop = currstop.getFullYear()+"-"+(currstop.getMonth()+1)+"-"+currstop.getDate();
+				currstart = currstart.getFullYear()+"-"+(currstart.getMonth()+1)+"-"+currstart.getDate();
+
+				var postdat = {
+					nets: ["APL", "DISC"],
+					stream: "l3d",
+					demo: "p25_54",
+					metric: "imp",
+					starttime: currstart,
+					stoptime: currstop,
+					yagostart: yagostart,
+					yagostop: yagostop
+				}
+
+				console.log("first ajax worked!", dat, postdat);
+
+				$.ajax({
+					url: "http://localhost:8888/tvgrid-redux/api/getDaypartAverage",
+					data: postdat,
+					success: function(dat2){
+						console.log("second call worked too", dat2);
+
+						buildBoxGraph(dat2);
+
+					},
+					dataType: "json"
+				})
+			},
+			dataType: "json"
+		})
+
+
+		function buildBoxGraph(jdat){
+			var margin = {top: 20, right: 30, bottom: 45, left: 40},
+			width = 800 - margin.left - margin.right,
+			height = 400 - margin.top - margin.bottom,
+			padding = 0.3;
+
+			var x = d3.scale.ordinal()
+			.rangeRoundBands([0, width], padding);
+
+			var y = d3.scale.linear()
+			.range([height, 0]);
+
+			var xAxis = d3.svg.axis()
+			.scale(x)
+			.orient("bottom");
+
+			var yAxis = d3.svg.axis()
+			.scale(y)
+			.orient("left");
+			//.tickFormat(function(d) { return (d); });
+
+			var chart = d3.select(".chart")
+			.attr("width", width + margin.left + margin.right)
+			.attr("height", height + margin.top + margin.bottom)
+			.append("g")
+			.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+			var max = 0;
+
+			{
+					jdat.map(function (arr) {
+						if (arr.cur_rating > max) {
+								max = arr.cur_rating;
+						}
+
+						if (arr.yago_rating > max) {
+							max = arr.yago_rating;
+						}
+					})
+			}
+
+			x.domain(jdat.map(function(d) { return d.net; }));
+			y.domain([0, max]);
+
+			chart.append("g")
+			.attr("class", "x axis")
+			.attr("transform", "translate(0," + height + ")")
+			.call(xAxis);
+
+			chart.append("g")
+			.attr("class", "y axis")
+			.call(yAxis);
+
+
+			chart.select(".axis").selectAll("text").remove();
+			var ticks = chart.select(".axis").selectAll(".tick")
+                    .data(jdat)
+                    .append("svg:image")
+                    .attr("xlink:href", function (d) { return d.net.trim()+"-logo.jpg" ; })
+										//.attr("class", function(d){ return "logo-"+d.net})
+										.attr("y", -10)
+										.attr("x", -37)
+                    .attr("width", 80)
+                    .attr("height", 70);
+
+
+			var bar = chart.selectAll(".bar")
+			.data(jdat)
+			.enter().append("g")
+			.attr("transform", function(d) { return "translate(" + x(d.net) + ",0)"; });
+
+			bar.append("rect")
+			.attr("y", function(d) { return y( Math.max(d.cur_rating, d.yago_rating) ); })
+			.attr("height", function(d) { return Math.abs( y(d.cur_rating) - y(d.yago_rating) ); })
+			.attr("width", x.rangeBand())
+			//.attr("class", "bar");
+			.attr("class", function(d){return "bar "+d.net});
+
+			bar.append("circle")
+			.attr("cx", (x.rangeBand()/2))
+			.attr("cy", function(d) { return y(d.cur_rating) + 2; })
+			.attr("r", 15)
+			.attr("class", "bg-circ");
+
+			bar.append("text")
+			.attr("x", (x.rangeBand()/2)-9 )
+			.attr("y", function(d) { return y(d.cur_rating) + 5; })
+			.attr("class", "label")
+			.text(function(d) { return Math.round(d.cur_rating);});
+
+
+		}
+
+	});
+	</script>
+
+	<script src="http://d3js.org/d3.v3.min.js"></script>
+
+</head>
+<body>
+	<svg class="chart"></svg>
+
+</body>
+</html>

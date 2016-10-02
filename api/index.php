@@ -353,6 +353,75 @@ $app->get('/getTimedata/', function () {
 
 
 
+$app->get('/getDaypartAverage/', function () {
+  $app = \Slim\Slim::getInstance();
+  $nets = $app->request->get('nets');
+  $stream = $app->request->get('stream');
+  $metric = $app->request->get('metric');
+  $demo = $app->request->get('demo');
+  $starttime = $app->request->get('starttime');
+  $stoptime = $app->request->get('stoptime');
+  $yagostart = $app->request->get('yagostart');
+  $yagostop = $app->request->get('yagostop');
+
+  try
+  {
+    function selectNets($n, $appender){
+      if(is_array($n)){
+        $len = count($n) - 1;
+        $select = '(';
+        foreach ($n as $i => $net) {
+          $select = $select.$appender."net = '".$net."' ";
+          if($i < $len){
+            $select = $select.'OR ';
+          }
+        }
+        $select = $select.') ';
+      }
+      else{
+        $select = $appender.'net = "'.$n.'" ';
+      }
+      return $select;
+    }
+
+    $qry = "SELECT curryr.net, avg(curryr.rating_val) as cur_rating, SUM(curryr.duration) as curr_dur, bq.year, bq.qtr, yago_yr.yago_rating, yago_yr.yago_dur
+      FROM daypart_ratings curryr
+      INNER JOIN (SELECT net, date, avg(rating_val) as yago_rating, sum(duration) as yago_dur FROM daypart_ratings
+      WHERE type='".$metric."'  AND stream='".$stream."' AND demo='".$demo."' AND ";
+
+      $qry = $qry.selectNets($nets, "");
+
+      $qry = $qry." AND (date >= '".$yagostart."' AND date <= '".$yagostop."')
+                      GROUP BY net) yago_yr
+                      ON (curryr.net=yago_yr.net)
+                      INNER JOIN (SELECT label, start, stop, year, qtr
+                      FROM bcast_quarters) bq
+                      ON (curryr.date>=bq.start AND curryr.date<=bq.stop)
+                      WHERE (".selectNets($nets, "curryr.")." AND curryr.type='".$metric."' AND curryr.stream='".$stream."' AND curryr.demo='".$demo."' AND ((curryr.date >= '".$starttime."' AND curryr.date <= '".$stoptime."')))
+                      GROUP BY curryr.net, bq.label ORDER BY cur_rating DESC;";
+
+    $db = getDB();
+    $sth = $db->prepare($qry);
+    $sth->execute();
+    $data = $sth->fetchAll(PDO::FETCH_OBJ);
+
+    if($data) {
+      $app->response->setStatus(200);
+      $app->response()->headers->set('Content-Type', 'application/json');
+      echo json_encode(utf8ize($data));
+      $db = null;
+    } else {
+      throw new PDOException('No records found.');
+    }
+
+  } catch(PDOException $e) {
+    $app->response()->setStatus(404);
+    echo '{"error":{"text":'. $e->getMessage() .'}}';
+  }
+});
+
+
+
 $app->get('/getaverage/', function () {
   $app = \Slim\Slim::getInstance();
   $net = $app->request->get('net');
