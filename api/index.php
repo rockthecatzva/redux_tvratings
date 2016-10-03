@@ -408,6 +408,7 @@ $app->get('/getDaypartAverage/', function () {
     if($data) {
       $app->response->setStatus(200);
       $app->response()->headers->set('Content-Type', 'application/json');
+      $app->response()->headers->set('Access-Control-Allow-Origin', '*'); // THIS ALLOWS CROSS AXISSSS!!!!
       echo json_encode(utf8ize($data));
       $db = null;
     } else {
@@ -708,6 +709,7 @@ $app->get('/getQTD/', function () {
     if($data) {
       $app->response->setStatus(200);
       $app->response()->headers->set('Content-Type', 'application/json');
+      $app->response()->headers->set('Access-Control-Allow-Origin', '*');// THIS ALLOWS CROSS AXISSSS!!!!
       echo json_encode(utf8ize($data));
       $db = null;
 
