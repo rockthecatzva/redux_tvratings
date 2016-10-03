@@ -6,8 +6,8 @@ function getDB()
 {
   $dbhost = "localhost";
   $dbuser = "root";
-  $dbpass = "root";
-  //$dbpass = "d1sc0v3ry";
+  //$dbpass = "root";
+  $dbpass = "d1sc0v3ry";
   $dbname = "AutoTracker";
   /*
   $dbuser = "rockthe2";

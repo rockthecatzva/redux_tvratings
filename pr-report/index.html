@@ -167,7 +167,8 @@
 	<script type="text/javascript">
 	$(document).ready(function(){
 		$.ajax({
-			url: "http://localhost:8888/tvgrid-redux/api/getQTD",
+			url: "http://dctrydatrk01.discovery.com/api/index.php/getQTD",
+			crossDomain: true,
 			success: function(dat){
 				var yagostart = new Date(dat[0]["yagostart"]);
 				var yagostop = new Date(yagostart);
@@ -182,7 +183,7 @@
 				currstart = currstart.getFullYear()+"-"+(currstart.getMonth()+1)+"-"+currstart.getDate();
 
 				var postdat = {
-					nets: ["APL", "DISC"],
+					nets: ["APL", "DISC", "ID", "TLC", "DAM", "AHC", "VEL", "SCI", "OWN", "DLIF", "DFC"],
 					stream: "l3d",
 					demo: "p25_54",
 					metric: "imp",
@@ -195,8 +196,9 @@
 				console.log("first ajax worked!", dat, postdat);
 
 				$.ajax({
-					url: "http://localhost:8888/tvgrid-redux/api/getDaypartAverage",
+					url: "http://dctrydatrk01.discovery.com/api/index.php/getDaypartAverage",
 					data: postdat,
+					crossDomain: true,
 					success: function(dat2){
 						console.log("second call worked too", dat2);
 
@@ -241,15 +243,17 @@
 
 			{
 					jdat.map(function (arr) {
-						if (arr.cur_rating > max) {
-								max = arr.cur_rating;
+						if (parseInt(arr.cur_rating) > max) {
+								max = parseInt(arr.cur_rating);
 						}
 
-						if (arr.yago_rating > max) {
-							max = arr.yago_rating;
+						if (parseInt(arr.yago_rating) > max) {
+							max = parseInt(arr.yago_rating);
 						}
 					})
 			}
+
+			console.log("max found", max)
 
 			x.domain(jdat.map(function(d) { return d.net; }));
 			y.domain([0, max]);
