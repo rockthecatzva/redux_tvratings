@@ -173,6 +173,8 @@ ALTER TABLE `bcast_years`
 MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=17;
 
 
+ALTER TABLE bcast_years ADD year int;
+
 ----------------------------------------------------------
 ----- NECESSARY UPDATES TO TABLE -------------------------
 ALTER TABLE ag_dayparts MODIFY COLUMN ID INT auto_increment;
@@ -239,3 +241,44 @@ FROM daypart_ratings
 FROM bcast_quarters) bq
   ON (curryr.date>=bq.start AND curryr.date<=bq.stop) WHERE ((net = "APL" OR net = "DISC" ) AND curryr.type='imp' AND curryr.stream='l3d' AND curryr.demo='p25_54' AND ((curryr.date >= '2015-6-29' AND curryr.date <= '2015-9-20')))
 GROUP BY curryr.net, bq.label;
+
+
+
+
+
+
+
+
+
+
+------ THIS WORKS ------
+should one api return a single stack of data that needs to be split? no
+
+
+SELECT curryr.net, curryr.date, avg(curryr.rating_val) as cur_rating, SUM(curryr.duration) as curr_dur, 1+DATEDIFF(curryr.date, bq.start) DIV 7 as wknum, bq.year, bq.start
+FROM daypart_ratings curryr
+INNER JOIN (SELECT start, stop, year FROM bcast_years) bq
+ON (curryr.date>=bq.start AND curryr.date<=bq.stop)
+WHERE curryr.net="APL" and curryr.type="imp" and curryr.demo="p25_54"
+GROUP BY curryr.net, wknum, bq.year
+ORDER BY bq.year, wknum;
+
+
+
+SELECT * FROM (SELECT curryr.net, curryr.date, avg(curryr.rating_val) as cur_rating, SUM(curryr.duration) as curr_dur, 1+DATEDIFF(curryr.date, bq.start) DIV 7 as wknum, bq.year, bq.start
+FROM daypart_ratings curryr
+INNER JOIN (SELECT start, stop, year FROM bcast_years) bq
+ON (curryr.date>=bq.start AND curryr.date<=bq.stop)
+WHERE curryr.net="APL" and curryr.type="imp" and curryr.demo="p25_54"
+GROUP BY curryr.net, wknum, bq.year
+ORDER BY bq.year, wknum) as currwkly;
+
+
+
+SELECT * FROM (SELECT curryr.net, curryr.date, avg(curryr.rating_val) as cur_rating, SUM(curryr.duration) as curr_dur, 1+DATEDIFF(curryr.date, bq.start) DIV 7 as wknum, bq.year, bq.start
+FROM daypart_ratings curryr
+INNER JOIN (SELECT start, stop, year FROM bcast_years) bq
+ON (curryr.date>=bq.start AND curryr.date<=bq.stop)
+WHERE curryr.net="APL" and curryr.type="imp" and curryr.demo="p25_54"
+GROUP BY curryr.net, wknum, bq.year
+ORDER BY bq.year, wknum) as currwkly;

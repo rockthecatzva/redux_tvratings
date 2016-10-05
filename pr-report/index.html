@@ -6,7 +6,7 @@
 	<style>
 	@font-face {
 		font-family: bebas;
-		src: url("./fonts/BebasNeue Bold.otf")
+		src: url("../fonts/BebasNeue Bold.otf")
 	}
 
 	@font-face {
@@ -134,8 +134,8 @@
 	}
 
 	.bar {
-		rx: 3;
-		ry: 3;
+		//rx: 3;
+		//ry: 3;
 		stroke: #8a8a8e;
 	}
 
@@ -144,19 +144,25 @@
 		stroke: #8a8a8e;
 	}
 
-	.APL{
-		fill: #34e57b;
+	.graph-label{
+		font-family: bebas;
+		font-size: 1.3em;
 	}
 
-	.DISC{
-		fill: #0609a3;
-	}
+.gainer{
+		fill: green;
+		stroke: green;
+}
 
-	.logo-DISC{
+.decliner{
+	fill: red;
+	stroke: red;
+}
 
-	}
-
-
+.graph-title{
+	font-family: bebas;
+	font-size: 2.0em;
+}
 
 	</style>
 
@@ -213,10 +219,10 @@
 
 
 		function buildBoxGraph(jdat){
-			var margin = {top: 20, right: 30, bottom: 45, left: 40},
+			var margin = {top: 30, right: 30, bottom: 45, left: 40},
 			width = 800 - margin.left - margin.right,
 			height = 400 - margin.top - margin.bottom,
-			padding = 0.3;
+			padding = 0.1;
 
 			var x = d3.scale.ordinal()
 			.rangeRoundBands([0, width], padding);
@@ -253,7 +259,6 @@
 					})
 			}
 
-			console.log("max found", max)
 
 			x.domain(jdat.map(function(d) { return d.net; }));
 			y.domain([0, max]);
@@ -268,16 +273,25 @@
 			.call(yAxis);
 
 
+			var txt = jdat[0].qtr+"Q-"+jdat[0].year+" Prime P25-54 L3 (thru "+(jdat[0].curr_dur/1260)+" wks) vs. Same Wks YAGO";
+			//console.log(jdat[0].curr_dur, jdat[0].curr_dur/1260)
+
+			chart.append("text")
+				.attr("x", -(margin.left)+3)
+				.attr("y", -(5))
+				.attr("class", "graph-title")
+				.text(txt);
+
 			chart.select(".axis").selectAll("text").remove();
 			var ticks = chart.select(".axis").selectAll(".tick")
                     .data(jdat)
                     .append("svg:image")
                     .attr("xlink:href", function (d) { return d.net.trim()+"-logo.jpg" ; })
-										//.attr("class", function(d){ return "logo-"+d.net})
-										.attr("y", -10)
-										.attr("x", -37)
-                    .attr("width", 80)
-                    .attr("height", 70);
+										//.attr("class", "graph-label")
+										.attr("y", 2)
+										.attr("x", -30)
+                    .attr("width", 60)
+                    .attr("height", 40);
 
 
 			var bar = chart.selectAll(".bar")
@@ -288,20 +302,30 @@
 			bar.append("rect")
 			.attr("y", function(d) { return y( Math.max(d.cur_rating, d.yago_rating) ); })
 			.attr("height", function(d) { return Math.abs( y(d.cur_rating) - y(d.yago_rating) ); })
-			.attr("width", x.rangeBand())
-			//.attr("class", "bar");
-			.attr("class", function(d){return "bar "+d.net});
+			.attr("width", x.rangeBand()-30)
+			.attr("x", "+16")
+			.attr("class", function(d){
+				if(parseFloat(d.cur_rating)>parseFloat(d.yago_rating)){
+					return "gainer";
+				}
+				else{
+					return "decliner";
+				}
+			});
 
+
+			/*
 			bar.append("circle")
 			.attr("cx", (x.rangeBand()/2))
 			.attr("cy", function(d) { return y(d.cur_rating) + 2; })
 			.attr("r", 15)
 			.attr("class", "bg-circ");
+			*/
 
 			bar.append("text")
 			.attr("x", (x.rangeBand()/2)-9 )
-			.attr("y", function(d) { return y(d.cur_rating) + 5; })
-			.attr("class", "label")
+			.attr("y", function(d) { return y(d.cur_rating); })
+			.attr("class", "graph-label")
 			.text(function(d) { return Math.round(d.cur_rating);});
 
 
