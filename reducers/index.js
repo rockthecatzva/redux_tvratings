@@ -1,9 +1,11 @@
 import { combineReducers } from 'redux'
 import {
   SELECT_REDDIT, INVALIDATE_REDDIT, RECEIVE_DATA, REQUEST_DATA,
-  REQUEST_POSTS, RECEIVE_POSTS, RECEIVE_NETS, SELECT_NETWORK, RECEIVE_WEEKS, SELECT_WEEK, IS_FETCHING, INCREMENT_TX, INCREMENT_RX
+  REQUEST_POSTS, RECEIVE_POSTS, RECEIVE_NETS, SELECT_NETWORK, RECEIVE_WEEKS, SELECT_WEEK, IS_FETCHING, INCREMENT_TX, INCREMENT_RX, RECEIVE_DATES
 } from '../actions'
 
+
+/*
 function selectedReddit(state = 'reactjs', action) {
   switch (action.type) {
     case SELECT_REDDIT:
@@ -12,6 +14,7 @@ function selectedReddit(state = 'reactjs', action) {
       return state
   }
 }
+*/
 
 function selectedNetwork(state='init1', action){
   switch (action.type){
@@ -71,7 +74,7 @@ function isFetching(state={ status: true, txCount: 0, rxCount: 0}, action){
       return Object.assign({}, state, {
         txCount: state['txCount']+1
       })
-    
+
     case RECEIVE_DATA:
       var rct = state['rxCount']+1
       var allLoaded = (rct >= state['txCount'])
@@ -152,16 +155,26 @@ function weeks(state={weeks:[]}, action){
   }
 }
 
+function dates(state={dates:[]}, action){
+  switch(action.type){
+    case RECEIVE_DATES:
+      return Object.assign({}, state, {
+        dates: action.dates[0]
+      })
+    default:
+    return state;
+  }
+}
+
+
 
 const rootReducer = combineReducers({
-  //postsByReddit,
-  //selectedReddit,
   selectedNetwork,
   nets,
   weeks,
   selectedWeek,
-  ratings, 
-  //isFetching
+  ratings,
+  dates,
 })
 
 export default rootReducer

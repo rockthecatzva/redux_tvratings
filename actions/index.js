@@ -9,6 +9,7 @@ export const RECEIVE_POSTS = 'RECEIVE_POSTS'
 export const RECEIVE_NETS = 'RECEIVE_NETS'
 export const RECEIVE_WEEKS = 'RECEIVE_WEEKS'
 export const RECEIVE_DATA = 'RECEIVE_DATA'
+export const RECEIVE_DATES = 'RECEIVE_DATES'
 
 export const SELECT_REDDIT = 'SELECT_REDDIT'
 export const SELECT_NETWORK = 'SELECT_NETWORK'
@@ -20,43 +21,12 @@ export const INCREMENT_RX = 'INCREMENT_RX'
 export const INCREMENT_TX = 'INCREMENT_TX'
 
 
-/*
-export function selectReddit(reddit) {
-  return {
-    type: SELECT_REDDIT,
-    reddit
-  }
-}
-*/
-
-/*
- export function setFetching(){
-  return{
-    type: IS_FETCHING
-  }
-}
-
- export function incrRxCount(){
-  return{
-    type: INCREMENT_RX
-  }
-}
-
-export function incrTxCount(){
-  return{
-    type: INCREMENT_TX
-  }
-}
-
-*/
-
 function requestData(treeparent){
   return{
     type: REQUEST_DATA,
     treeparent
   }
 }
-
 
 export function selectNetwork(net){
   return{
@@ -114,6 +84,13 @@ function receiveWeeks(data){
   }
 }
 
+function receiveDates(data){
+  return{
+    type: RECEIVE_DATES,
+    dates: data
+  }
+}
+
 /*
 function fetchPosts(reddit) {
   return dispatch => {
@@ -144,6 +121,16 @@ export function fetchWeeks() {
       .then(json => dispatch(receiveWeeks(json)))
   }
 }
+
+export function fetchDates() {
+  return dispatch => {
+    //dispatch(requestWeeks)
+    return fetch('http://localhost:8888/api-tvratings-phpslim/getQTD')
+      .then(response => response.json())
+      .then(json => dispatch(receiveDates(json)))
+  }
+}
+
 
 
 export function fetchAPIData(url, treeparent){

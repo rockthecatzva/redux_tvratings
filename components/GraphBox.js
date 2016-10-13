@@ -11,6 +11,7 @@ var width, height = 0
 export default class GraphBox extends Component {
 
     updateData(data) {
+      const {lineTags} = this.props
 
         var el = d3.select(ReactDOM.findDOMNode(this)).select("svg")
         var x = d3.scaleLinear().domain([0, data.graphData[0].length - 1]).range([MARGIN, width - MARGIN])
@@ -71,10 +72,10 @@ export default class GraphBox extends Component {
         el.selectAll(".dot").remove()
 
         {
-            data.graphData.map(function (arr) {
+            data.graphData.map(function (arr, iter) {
                 var graph = el.append("g").data([arr]);
                 graph.append("path")
-                    .attr("class", "graph-line")
+                    .attr("class", lineTags[iter])
                     .attr("d", line);
                 //.attr("transform", "translate("+MARGIN+",-"+MARGIN+")")
                 var d = el.append("g").selectAll("circle").data(arr);
@@ -127,7 +128,7 @@ export default class GraphBox extends Component {
 
 
     render() {
-        const {graphData, isFetching} = this.props
+        const {graphData, lineTags, isFetching} = this.props
 
         //console.log("Rendering the graph", spin, this.spin, this.props.showSpinner)
 
@@ -146,5 +147,6 @@ export default class GraphBox extends Component {
 
 GraphBox.propTypes = {
     graphData: PropTypes.array.isRequired,
+    lineTags: PropTypes.array.isRequired,
     isFetching: PropTypes.bool.isRequired
 }
