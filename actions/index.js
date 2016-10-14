@@ -84,10 +84,11 @@ function receiveWeeks(data){
   }
 }
 
-function receiveDates(data){
+function receiveDates(data, period){
   return{
     type: RECEIVE_DATES,
-    dates: data
+    dates: data,
+    period: period
   }
 }
 
@@ -122,12 +123,12 @@ export function fetchWeeks() {
   }
 }
 
-export function fetchDates() {
+export function fetchDates(period, endpoint) {
   return dispatch => {
     //dispatch(requestWeeks)
-    return fetch('http://localhost:8888/api-tvratings-phpslim/getQTD')
+    return fetch('http://localhost:8888/api-tvratings-phpslim/time.php/'+endpoint)
       .then(response => response.json())
-      .then(json => dispatch(receiveDates(json)))
+      .then(json => dispatch(receiveDates(json, period, endpoint)))
   }
 }
 

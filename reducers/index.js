@@ -16,6 +16,7 @@ function selectedReddit(state = 'reactjs', action) {
 }
 */
 
+/*
 function selectedNetwork(state='init1', action){
   switch (action.type){
     case RECEIVE_NETS:
@@ -37,6 +38,7 @@ function selectedWeek(state='def1', action){
       return state
   }
 }
+*/
 
 function ratings(state={}, action){
   switch(action.type){
@@ -144,6 +146,7 @@ function nets(state={nets:[]}, action){
   }
 }
 
+/*
 function weeks(state={weeks:[]}, action){
   switch(action.type){
     case RECEIVE_WEEKS:
@@ -154,12 +157,14 @@ function weeks(state={weeks:[]}, action){
     return state;
   }
 }
+*/
 
-function dates(state={dates:[]}, action){
+
+function dates(state={}, action){
   switch(action.type){
     case RECEIVE_DATES:
       return Object.assign({}, state, {
-        dates: action.dates[0]
+        [action.period]: action.dates[0]
       })
     default:
     return state;
@@ -169,10 +174,10 @@ function dates(state={dates:[]}, action){
 
 
 const rootReducer = combineReducers({
-  selectedNetwork,
+  //selectedNetwork,
   nets,
-  weeks,
-  selectedWeek,
+  //weeks,
+  //selectedWeek,
   ratings,
   dates,
 })

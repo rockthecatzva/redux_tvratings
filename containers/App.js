@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { fetchNets, selectNetwork, fetchWeeks, selectWeek, fetchAPIData, fetchDates} from '../actions'
+import { fetchAPIData, fetchDates} from '../actions'
 import Picker from '../components/Picker'
 import ComparisonBox from '../components/ComparisonBox'
 import GraphBox from '../components/GraphBox'
@@ -19,10 +19,9 @@ class App extends Component {
   }
 
   componentDidMount() {
-    const { dispatch, nets, selectedNetwork, dates } = this.props
-    //dispatch(fetchNets())
-    //dispatch(fetchWeeks())
-    dispatch(fetchDates())
+    const { dispatch, dates } = this.props
+    dispatch(fetchDates("Qtd", "getQTD"))
+    dispatch(fetchDates("Ytd", "getYTD"))
   }
 
   componentWillReceiveProps(nextProps) {
@@ -30,17 +29,30 @@ class App extends Component {
     const { dispatch } = this.props// IS THIS KOSHER???
 
     if(nextProps.dates !== this.props.dates){
-      console.log("FOUND NEW DATES", nextProps.dates.dates)
-      dispatch(fetchAPIData('http://localhost:8888/api-tvratings-phpslim/time.php/getWeeklyDaypartAverages/?net=APL&metric=aa&stream%5B%5D=lsd&demo%5B%5D=p55&starttime=APL&stream=l3d&demo=p25_54&metric=aa&starttime='+nextProps.dates.dates.start+'&daysin='+nextProps.dates.dates.daysin, 'Weekly-APL-QTD-P2554-L3D'))
-      dispatch(fetchAPIData('http://localhost:8888/api-tvratings-phpslim/time.php/getWeeklyDaypartAverages/?net=APL&metric=aa&stream%5B%5D=lsd&demo%5B%5D=p55&starttime=APL&stream=l3d&demo=p25_54&metric=aa&starttime='+nextProps.dates.dates.yagostart+'&daysin='+nextProps.dates.dates.daysin, 'Weekly-APL-YAGOQTD-P2554-L3D'))
+      console.log("FOUND NEW DATES", nextProps)
+      if(nextProps.dates.hasOwnProperty('Qtd')){
+        if(nextProps.dates.Qtd!=this.props.dates.Qtd){
+          console.log("QTD is now in !! ?")
+          dispatch(fetchAPIData('http://localhost:8888/api-tvratings-phpslim/time.php/getDaypartAverage?nets%5B%5D=APL&nets%5B%5D=DISC&nets%5B%5D=ID&nets%5B%5D=TLC&nets%5B%5D=DAM&nets%5B%5D=AHC&nets%5B%5D=VEL&nets%5B%5D=SCI&nets%5B%5D=OWN&nets%5B%5D=DLIF&nets%5B%5D=DFC&stream=l3d&demo=p25_54&metric=imp&starttime='+nextProps.dates.Qtd.start+'&daysin='+nextProps.dates.Qtd.daysin+'&yagostart='+nextProps.dates.Qtd.yagostart, 'QTDPortfolioBarChart-DCI'))
+        }
+      }
 
-      dispatch(fetchAPIData('http://localhost:8888/api-tvratings-phpslim/time.php/getWeeklyDaypartAverages/?net=DISC&metric=aa&stream%5B%5D=lsd&demo%5B%5D=p55&starttime=APL&stream=l3d&demo=p25_54&metric=aa&starttime='+nextProps.dates.dates.start+'&daysin='+nextProps.dates.dates.daysin, 'Weekly-DISC-QTD-P2554-L3D'))
-      dispatch(fetchAPIData('http://localhost:8888/api-tvratings-phpslim/time.php/getWeeklyDaypartAverages/?net=DISC&metric=aa&stream%5B%5D=lsd&demo%5B%5D=p55&starttime=APL&stream=l3d&demo=p25_54&metric=aa&starttime='+nextProps.dates.dates.yagostart+'&daysin='+nextProps.dates.dates.daysin, 'Weekly-DISC-YAGOQTD-P2554-L3D'))
+      if(nextProps.dates.hasOwnProperty('Ytd')){
+        console.log("YTD is now in !! ?")
+        if(nextProps.dates.Ytd!=this.props.dates.Ytd){
+          dispatch(fetchAPIData('http://localhost:8888/api-tvratings-phpslim/time.php/getWeeklyDaypartAverages/?net=APL&metric=aa&stream=l3d&demo=p25_54&starttime='+nextProps.dates.Ytd.start+'&daysin='+nextProps.dates.Ytd.daysin, 'Weekly-APL-YTD-P2554-L3D'))
+          dispatch(fetchAPIData('http://localhost:8888/api-tvratings-phpslim/time.php/getWeeklyDaypartAverages/?net=APL&metric=aa&stream=l3d&demo=p25_54&starttime='+nextProps.dates.Ytd.yagostart+'&daysin='+nextProps.dates.Ytd.yagofulldays, 'Weekly-APL-YAGOYTD-P2554-L3D'))
+
+          dispatch(fetchAPIData('http://localhost:8888/api-tvratings-phpslim/time.php/getWeeklyDaypartAverages/?net=DISC&metric=aa&stream=l3d&demo=p25_54&&starttime='+nextProps.dates.Ytd.start+'&daysin='+nextProps.dates.Ytd.daysin, 'Weekly-DISC-YTD-P2554-L3D'))
+          dispatch(fetchAPIData('http://localhost:8888/api-tvratings-phpslim/time.php/getWeeklyDaypartAverages/?net=DISC&metric=aa&stream=l3d&demo=p25_54&&starttime='+nextProps.dates.Ytd.yagostart+'&daysin='+nextProps.dates.Ytd.yagofulldays, 'Weekly-DISC-YAGOYTD-P2554-L3D'))
+        }
+
+      }
+
+      dispatch(fetchAPIData('http://localhost:8888/api-tvratings-phpslim/telecasts.php/getweeklylistbydemo/?net=APL&metric=aa&stream=l3d&demos%5B%5D=p25_54&demos%5B%5D=m25_54&demos%5B%5D=w25_54&starttime=2015-10-19&days=7&limitby=10', 'TelecastList-APL'))
+      dispatch(fetchAPIData('http://localhost:8888/api-tvratings-phpslim/telecasts.php/getweeklylistbydemo/?net=DISC&metric=aa&stream=l3d&demos%5B%5D=p25_54&demos%5B%5D=m25_54&demos%5B%5D=w25_54&starttime=2015-10-19&days=7&limitby=10', 'TelecastList-DISC'))
 
 
-      dispatch(fetchAPIData('http://localhost:8888/api-tvratings-phpslim/telecasts.php/getweeklylistbydemo/?net=APL&metric=aa&stream=l3d&demos%5B%5D=p25_54&demos%5B%5D=m25_54&demos%5B%5D=w25_54&starttime=2015-10-19&days=7&limitby=5', 'TelecastList-APL'))
-
-      dispatch(fetchAPIData('http://localhost:8888/api-tvratings-phpslim/time.php/getDaypartAverage?nets%5B%5D=APL&nets%5B%5D=DISC&nets%5B%5D=ID&nets%5B%5D=TLC&nets%5B%5D=DAM&nets%5B%5D=AHC&nets%5B%5D=VEL&nets%5B%5D=SCI&nets%5B%5D=OWN&nets%5B%5D=DLIF&nets%5B%5D=DFC&stream=l3d&demo=p25_54&metric=imp&starttime=2016-6-27&stoptime=2016-8-7&yagostart=2015-6-29&yagostop=2015-8-9', 'QTDPortfolioBarChart-DCI'))
 
 
     }
@@ -84,7 +96,7 @@ class App extends Component {
 
 
   render() {
-    const { nets, selectedNetwork, selectedWeek, weeks, ratings, dates } = this.props
+    const { nets, ratings, dates } = this.props
 
     //console.log(dates)
     var getData = function(dataname){
@@ -109,10 +121,10 @@ class App extends Component {
 
     return (
       <div>
-      <div>{dates.dates.label} thru {(parseInt(dates.dates.daysin)+1)/7} wks vs. Same wks YAGO</div>
 
 
-      <div className="col-sm-10 panel panel-default">
+
+      <div className="col-sm-10">
         <div className="graph-title">QTD DCI Portfolio Performance vs. Same wks. YAGO</div>
         <BarsStartStop barData={getData('QTDPortfolioBarChart-DCI')} isFetching={totalFetching(["QTDPortfolioBarChart-DCI"])} />
       </div>
@@ -120,14 +132,14 @@ class App extends Component {
 
 
       <div className="row">
-        <div className="col-sm-5 panel panel-default">
+        <div className="col-sm-8">
           <div className="graph-title">DISC</div>
-          <GraphBox height={300} width={500} graphData={[getData('Weekly-DISC-QTD-P2554-L3D'), getData('Weekly-DISC-YAGOQTD-P2554-L3D')]} lineTags={["DISC-line","DISC-yago-line"]} isFetching={totalFetching(["Weekly-DISC-QTD-P2554-L3D", "Weekly-DISC-YAGOQTD-P2554-L3D"])} />
+          <GraphBox height={300} width={500} graphData={[getData('Weekly-DISC-YTD-P2554-L3D'), getData('Weekly-DISC-YAGOYTD-P2554-L3D')]} lineTags={["DISC-line","DISC-yago-line"]} isFetching={totalFetching(["Weekly-DISC-YTD-P2554-L3D", "Weekly-DISC-YAGOYTD-P2554-L3D"])} />
         </div>
 
-        <div className="col-sm-5 panel panel-default">
+        <div className="col-sm-8">
           <div className="graph-title">APL</div>
-          <GraphBox height={300} width={500} graphData={[getData('Weekly-APL-QTD-P2554-L3D'), getData('Weekly-APL-YAGOQTD-P2554-L3D')]} lineTags={["APL-line","APL-yago-line"]} isFetching={totalFetching(["Weekly-APL-QTD-P2554-L3D", "Weekly-APL-YAGOQTD-P2554-L3D"])} />
+          <GraphBox height={300} width={500} graphData={[getData('Weekly-APL-YTD-P2554-L3D'), getData('Weekly-APL-YAGOYTD-P2554-L3D')]} lineTags={["APL-line","APL-yago-line"]} isFetching={totalFetching(["Weekly-APL-YTD-P2554-L3D", "Weekly-APL-YAGOYTD-P2554-L3D"])} />
         </div>
       </div>
 
@@ -138,11 +150,14 @@ class App extends Component {
 
 
       <div className="row">
-        <div className="col-sm-6 panel panel-default">
+        <div className="col-sm-6">
           <TelecastListSimplest telecastData={getData('TelecastList-APL')} columnList={["p25_54", "m25_54", "w25_54"]} isFetching={totalFetching(['TelecastList-APL'])} />
         </div>
-      </div>
 
+        <div className="col-sm-6">
+          <TelecastListSimplest telecastData={getData('TelecastList-DISC')} columnList={["p25_54", "m25_54", "w25_54"]} isFetching={totalFetching(['TelecastList-DISC'])} />
+        </div>
+      </div>
 
       </div>
     )
@@ -150,26 +165,27 @@ class App extends Component {
 }
 
 App.propTypes = {
-  selectedNetwork: PropTypes.string.isRequired,
-  selectedWeek: PropTypes.string.isRequired,
-  weeks: PropTypes.object.isRequired,
+  //selectedNetwork: PropTypes.string.isRequired,
+  //selectedWeek: PropTypes.string.isRequired,
+  //weeks: PropTypes.object.isRequired,
   ratings: PropTypes.object.isRequired,
-  nets: PropTypes.object.isRequired,
+  dates: PropTypes.object.isRequired,
+  //nets: PropTypes.object.isRequired,
   //isFetching: PropTypes.object.isRequired,
   dispatch: PropTypes.func.isRequired
 }
 
 function mapStateToProps(state) {
-  const {nets, selectedNetwork, selectedWeek, weeks, ratings, dates } = state
+  const {ratings, dates } = state
 
   return {
-    selectedNetwork,
-    selectedWeek,
-    nets,
+    //selectedNetwork,
+    //selectedWeek,
+    //nets,
     ratings,
     dates,
     //isFetching,
-    weeks
+    //weeks
   }
 }
 

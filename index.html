@@ -2,6 +2,8 @@
 <html>
 <head>
 	<title>Redux async example</title>
+	<link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
 
 	<style>
 	/* tell the SVG path to be a thin blue line without any area fill */
@@ -28,11 +30,18 @@
 		height: 20em;
 	}
 
-	path {
-		stroke: steelblue;
-		stroke-width: 1;
+	.line {
+		stroke-width: 3;
 		fill: none;
+		shape-rendering: geometricPrecision;
 	}
+
+	.dot{
+		stroke: grey;
+		stroke-width: 2;
+		fill: white;
+	}
+
 
 	.APL-line{
 		stroke: red;
@@ -56,6 +65,17 @@
 		height: 400px;
 
 	}
+
+	.gainer{
+			fill: green;
+			stroke: green;
+	}
+
+	.decliner{
+		fill: red;
+		stroke: red;
+	}
+
 
 	.spinner{
 	    width: 100%;
@@ -118,13 +138,16 @@
 		color: green;
 	}
 
+	td {
+		border: none;
+	}
+
 
 	</style>
 
 	<script type="text/javascript" src="./node_modules/jquery/dist/jquery.min.js"></script>
 	<script src="./node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
-	<link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap-theme.min.css">
-	<link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
+
 
 
 </head>

@@ -13,11 +13,11 @@ export default class GraphBox extends Component {
     updateData(data) {
       const {lineTags} = this.props
 
-        var el = d3.select(ReactDOM.findDOMNode(this)).select("svg")
-        var x = d3.scaleLinear().domain([0, data.graphData[0].length - 1]).range([MARGIN, width - MARGIN])
-        var max = 0
 
-        console.log("Here is the GRAPH DATA", data.graphData)
+        console.log("Number of points is:", data.graphData[0].length - 1)
+        var el = d3.select(ReactDOM.findDOMNode(this)).select("svg")
+
+        var max = 0
 
         {
             data.graphData.map(function (arr) {
@@ -32,6 +32,18 @@ export default class GraphBox extends Component {
             })
         }
 
+        var max_x = 0
+
+        for (var set in data.graphData) {
+          if((data.graphData[set].length-1) > max_x) {
+            max_x= data.graphData[set].length-1;
+          }
+        }
+
+        var x = d3.scaleLinear().domain([0, max_x]).range([MARGIN, width - MARGIN])
+        //console.log("This is max_x: ", max_x, data.graphData[0].length)
+
+
         var y = d3.scaleLinear().domain([0, max]).range([height - MARGIN, MARGIN]);
 
         var line = d3.line()
@@ -45,7 +57,7 @@ export default class GraphBox extends Component {
         var xAxis = d3.axisBottom(x);
         var xlabels = data.graphData[0].map(function (d) {
             var t = new Date(d.date_time)
-            var s = t.getMonth() + 1 + "/" + t.getDate() + "/" + t.getFullYear().toString().substr(2, 2);
+            var s = t.getMonth() + 1 + "/" + t.getDate();
             return s
         })
 
@@ -68,14 +80,14 @@ export default class GraphBox extends Component {
             .attr("transform", "translate(" + MARGIN + ",0)")
             .call(yAxisLeft);
 
-        el.selectAll(".graph-line").remove()
+        el.selectAll(".line").remove()
         el.selectAll(".dot").remove()
 
         {
             data.graphData.map(function (arr, iter) {
                 var graph = el.append("g").data([arr]);
                 graph.append("path")
-                    .attr("class", lineTags[iter])
+                    .attr("class", lineTags[iter]+" line")
                     .attr("d", line);
                 //.attr("transform", "translate("+MARGIN+",-"+MARGIN+")")
                 var d = el.append("g").selectAll("circle").data(arr);
@@ -89,10 +101,7 @@ export default class GraphBox extends Component {
                     })
                     .attr("cy", function (d) {
                         return y(d.rating);
-                    })
-                    .style("fill", "white")
-                    .style("stroke", "black")
-                    .style("stroke-width", "2");
+                    });
 
                 d.exit().remove();
             })
@@ -101,16 +110,18 @@ export default class GraphBox extends Component {
 
 
     componentWillReceiveProps(nextprop) {
-        console.log("getting data", nextprop)
+        console.log("testing incoming data", nextprop)
 
         //this will only handle 2 lines, not 1 and not 2+ but 2 - need to rethink this
-        if ((nextprop.graphData !== this.props.graphData) && (nextprop.graphData[0][0] && nextprop.graphData[1][0])) {
+        if(JSON.stringify(nextprop.graphData) !== JSON.stringify(this.props.graphData)){
+
+            console.log("ITS DIFFERENT DATA TOO!!", nextprop.graphData, this.props.graphData, (nextprop.graphData == this.props.graphData))
             this.updateData(nextprop)
 
             //THE ISSUE IS THAT GRAPH AND TABLES ARE RECIEVING THE SAME DATA AGAIN
             //NEED TO MAKE THEM IGNORE IT UNLESS THE SUBMIT BUTTON HAS BEEN PRESSED
             //IM STILL NOT SURE WHY ITS GETTING FIRED SIMPLY BY CHANIGN NET OR WEEK
-            console.log("ITS DIFFERENT DATA TOO!!", nextprop.graphData, this.props.graphData, (nextprop.graphData == this.props.graphData))
+
         }
     }
 

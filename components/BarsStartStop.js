@@ -10,6 +10,11 @@ var width, height = 0
 export default class BarsStartStop extends Component {
 
     updateData(data) {
+
+      var barw = 30;
+
+
+
       var el = d3.select(ReactDOM.findDOMNode(this)).select("svg");
       el.selectAll(".maingroup").remove()
       el = el.append("g")
@@ -86,13 +91,13 @@ export default class BarsStartStop extends Component {
 			var bar = el.selectAll(".bar")
 			.data(data)
 			.enter().append("g")
-			.attr("transform", function(d) { return "translate(" + x(d.net) + ",0)"; })
+			.attr("transform", function(d) { return "translate(" + (x(d.net)+x.bandwidth()/2-(barw/2)) + ",0)"; })
       .attr("class", "bar");
 
 			bar.append("rect")
 			.attr("y", function(d) { return y( Math.max(d.cur_rating, d.yago_rating) ); })
 			.attr("height", function(d) { return Math.abs( y(d.cur_rating) - y(d.yago_rating) ); })
-			.attr("width", x.bandwidth())
+			.attr("width", barw)//x.bandwidth()
 			//.attr("x", function(d){ return (x)})
 			.attr("class", function(d){
 				if(parseFloat(d.cur_rating)>parseFloat(d.yago_rating)){
@@ -113,8 +118,8 @@ export default class BarsStartStop extends Component {
 			*/
 
 			bar.append("text")
-			.attr("x", Math.floor(x.bandwidth()/2))
-			.attr("y", function(d) { return y(d.cur_rating)+10; })
+			.attr("x", 0)//Math.floor(x.bandwidth()/2)
+			.attr("y", function(d) { return y(d.cur_rating)+14; })
 			.attr("class", "graph-label")
 			.text(function(d) { return Math.round(d.cur_rating);});
 
