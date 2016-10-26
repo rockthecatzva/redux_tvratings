@@ -33,10 +33,12 @@ export default class GraphBox extends Component {
         }
 
         var max_x = 0
+        var maxset = null
 
         for (var set in data.graphData) {
           if((data.graphData[set].length-1) > max_x) {
             max_x= data.graphData[set].length-1;
+            maxset = set
           }
         }
 
@@ -55,15 +57,19 @@ export default class GraphBox extends Component {
             });
 
         var xAxis = d3.axisBottom(x);
-        var xlabels = data.graphData[0].map(function (d) {
+
+        var xlabels = data.graphData[maxset].map(function (d) {
             var t = new Date(d.date_time)
-            var s = t.getMonth() + 1 + "/" + t.getDate();
+            var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            //var s = t.getMonth() + 1 + "/" + t.getDate();
+            var s = months[t.getMonth()]
             return s
         })
 
-        xAxis.ticks(data.graphData[0].length)
+        xAxis.ticks(data.graphData[maxset].length)
         xAxis.tickFormat(function (d, i) {
-            return xlabels[i];
+            if(i%4) return xlabels[i];
+            return "";
         })
         // Add the x-axis.
         el.selectAll(".xaxis").remove()
@@ -87,13 +93,13 @@ export default class GraphBox extends Component {
             data.graphData.map(function (arr, iter) {
                 var graph = el.append("g").data([arr]);
                 graph.append("path")
-                    .attr("class", lineTags[iter]+" line")
+                    .attr("class", lineTags[iter]+"-line line")
                     .attr("d", line);
                 //.attr("transform", "translate("+MARGIN+",-"+MARGIN+")")
                 var d = el.append("g").selectAll("circle").data(arr);
                 d.enter().append("circle")
                 //.attr("transform", "translate("+MARGIN+",-"+MARGIN+")")
-                    .attr("class", "dot")
+                    .attr("class", lineTags[iter]+"-dot dot")
                     .attr("r", 3)
                     .merge(d)//ENTER AND UPDATE
                     .attr("cx", function (d, i) {

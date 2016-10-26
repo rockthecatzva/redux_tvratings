@@ -21,17 +21,17 @@ export default class BarsStartStop extends Component {
         .attr("class", "maingroup")
         .attr("transform", "translate(" + MARGIN + ","+MARGIN+")");
 
-      var margin = {top: 30, right: 30, bottom: 45, left: 40},
-			padding = 0.1
+      //var margin = {top: 30, right: 30, bottom: 45, left: 40},
+			//padding = 0.1
 
-      width = width - margin.left - margin.right
-			height = height - margin.top - margin.bottom
+      //width = width - margin.left - margin.right
+			//height = height - margin.top - margin.bottom
 
 			var x = d3.scaleBand()
 			.range([0, width]);
 
 			var y = d3.scaleLinear()
-			.range([height, 0]);
+			.range([height-(MARGIN*2), 0]);
 
 			var xAxis = d3.axisBottom(x);
 
@@ -66,7 +66,7 @@ export default class BarsStartStop extends Component {
       el.selectAll(".xaxis").remove()
 			el.append("g")
 			.attr("class", "xaxis")
-      .attr("transform", "translate(0," + (height - MARGIN) + ")")
+      .attr("transform", "translate(0," + (height-MARGIN*2) + ")")
 			.call(xAxis);
 
       el.selectAll(".yaxis").remove()
@@ -138,8 +138,8 @@ export default class BarsStartStop extends Component {
 
     componentDidMount() {
         var el = ReactDOM.findDOMNode(this);
-        width = el.offsetWidth
-        height = el.offsetHeight
+        width = el.offsetWidth - MARGIN
+        height = el.offsetHeight - MARGIN
 
         var formatDate = d3.timeFormat("%d-%b-%y")
         var svg = d3.select(el).append("svg")

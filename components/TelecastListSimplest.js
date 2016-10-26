@@ -5,16 +5,11 @@ import Reactable from 'reactable'
 var Table = Reactable.Table;
 var Thead = Reactable.Thead;
 var Th = Reactable.Th;
+var Tr = Reactable.Tr;
+var Td = Reactable.Td;
 
 var Loader = require('halogen/PulseLoader');
 
-/*
-"ratings":{
-"lsd":{"aa":{"p25_54":"0.08","m25_54":"0.07"}},
-"l3d":{"aa":{"m25_54":"0.07","p25_54":"0.09"}}
-}
-}
-*/
 
 export default class TelecastRankerBox extends Component {
 
@@ -36,31 +31,41 @@ export default class TelecastRankerBox extends Component {
         </div>
       }
 
-      <Table sortable={true} className="table" data={telecastData} sortable={false} defaultSort={{column: 'aa-l3d-p25_54', direction: 'desc'}} >
+      <Table sortable={true} data={telecastData} sortable={false} defaultSort={{column: 'aa-l3d-p25_54', direction: 'desc'}} >
       <Thead>
 
 
-      <Th column="concat_name">
+      <Th className="rating-header" column="concat_name">
       Program Name
       </Th>
 
 
-      <Th column="dow">
+      <Th className="rating-header" column="dow">
       Day
       </Th>
 
-      <Th column="aa-l3d-p25_54">
+      <Th className="rating-header" column="aa-l3d-p25_54">
       P25-54
       </Th>
-      <Th column="aa-l3d-m25_54">
+      <Th className="rating-header" column="aa-l3d-m25_54">
       M25-54
       </Th>
-      <Th column="aa-l3d-w25_54">
+      <Th className="rating-header" column="aa-l3d-w25_54">
       W25-54
       </Th>
 
 
       </Thead>
+
+      <Tr>
+        <Td column="concat_name"> </Td>
+        <Td column="dow"> </Td>
+        <Td column="aa-l3d-p25_54" className="data-col"><div className="data-col"></div></Td>
+        <Td column="aa-l3d-m25_54" className="data-col" style={{textAlign: "center"}}> </Td>
+        <Td column="aa-l3d-w25_54" className="data-col"> </Td>
+      </Tr>
+
+
       </Table>
 
 

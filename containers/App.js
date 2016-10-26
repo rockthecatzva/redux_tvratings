@@ -6,7 +6,7 @@ import ComparisonBox from '../components/ComparisonBox'
 import GraphBox from '../components/GraphBox'
 import BarsStartStop from '../components/BarsStartStop'
 import TelecastListSimplest from '../components/TelecastListSimplest'
-
+import CableRankerList from '../components/CableRankerList'
 
 
 class App extends Component {
@@ -34,6 +34,9 @@ class App extends Component {
         if(nextProps.dates.Qtd!=this.props.dates.Qtd){
           console.log("QTD is now in !! ?")
           dispatch(fetchAPIData('http://localhost:8888/api-tvratings-phpslim/time.php/getDaypartAverage?nets%5B%5D=APL&nets%5B%5D=DISC&nets%5B%5D=ID&nets%5B%5D=TLC&nets%5B%5D=DAM&nets%5B%5D=AHC&nets%5B%5D=VEL&nets%5B%5D=SCI&nets%5B%5D=OWN&nets%5B%5D=DLIF&nets%5B%5D=DFC&stream=l3d&demo=p25_54&metric=imp&starttime='+nextProps.dates.Qtd.start+'&daysin='+nextProps.dates.Qtd.daysin+'&yagostart='+nextProps.dates.Qtd.yagostart, 'QTDPortfolioBarChart-DCI'))
+          dispatch(fetchAPIData('http://localhost:8888/api-tvratings-phpslim/time.php/getCableRanks?stream=l3d&demo=p25_54&metric=imp&start='+nextProps.dates.Qtd.start+'&daysin='+nextProps.dates.Qtd.daysin+'&yagostart='+nextProps.dates.Qtd.yagostart, 'ASCO-Ranks-QTD-P2554'))
+          dispatch(fetchAPIData('http://localhost:8888/api-tvratings-phpslim/time.php/getCableRanks?stream=l3d&demo=m25_54&metric=imp&start='+nextProps.dates.Qtd.start+'&daysin='+nextProps.dates.Qtd.daysin+'&yagostart='+nextProps.dates.Qtd.yagostart, 'ASCO-Ranks-QTD-M2554'))
+          dispatch(fetchAPIData('http://localhost:8888/api-tvratings-phpslim/time.php/getCableRanks?stream=l3d&demo=w25_54&metric=imp&start='+nextProps.dates.Qtd.start+'&daysin='+nextProps.dates.Qtd.daysin+'&yagostart='+nextProps.dates.Qtd.yagostart, 'ASCO-Ranks-QTD-W2554'))
         }
       }
 
@@ -121,32 +124,21 @@ class App extends Component {
 
     return (
       <div>
-
-
-
       <div className="col-sm-10">
         <div className="graph-title">QTD DCI Portfolio Performance vs. Same wks. YAGO</div>
         <BarsStartStop barData={getData('QTDPortfolioBarChart-DCI')} isFetching={totalFetching(["QTDPortfolioBarChart-DCI"])} />
       </div>
-
-
-
       <div className="row">
         <div className="col-sm-8">
           <div className="graph-title">DISC</div>
-          <GraphBox height={300} width={500} graphData={[getData('Weekly-DISC-YTD-P2554-L3D'), getData('Weekly-DISC-YAGOYTD-P2554-L3D')]} lineTags={["DISC-line","DISC-yago-line"]} isFetching={totalFetching(["Weekly-DISC-YTD-P2554-L3D", "Weekly-DISC-YAGOYTD-P2554-L3D"])} />
+          <GraphBox height={300} width={500} graphData={[getData('Weekly-DISC-YTD-P2554-L3D'), getData('Weekly-DISC-YAGOYTD-P2554-L3D')]} lineTags={["DISC","DISC-yago"]} isFetching={totalFetching(["Weekly-DISC-YTD-P2554-L3D", "Weekly-DISC-YAGOYTD-P2554-L3D"])} />
         </div>
 
         <div className="col-sm-8">
           <div className="graph-title">APL</div>
-          <GraphBox height={300} width={500} graphData={[getData('Weekly-APL-YTD-P2554-L3D'), getData('Weekly-APL-YAGOYTD-P2554-L3D')]} lineTags={["APL-line","APL-yago-line"]} isFetching={totalFetching(["Weekly-APL-YTD-P2554-L3D", "Weekly-APL-YAGOYTD-P2554-L3D"])} />
+          <GraphBox height={300} width={500} graphData={[getData('Weekly-APL-YTD-P2554-L3D'), getData('Weekly-APL-YAGOYTD-P2554-L3D')]} lineTags={["APL","APL-yago"]} isFetching={totalFetching(["Weekly-APL-YTD-P2554-L3D", "Weekly-APL-YAGOYTD-P2554-L3D"])} />
         </div>
       </div>
-
-
-
-
-
 
 
       <div className="row">
@@ -159,7 +151,19 @@ class App extends Component {
         </div>
       </div>
 
+    <div className="row">
+      <div className="col-sm-4">
+        <CableRankerList telecastData={getData('ASCO-Ranks-QTD-P2554')} isFetching={totalFetching(['ASCO-Ranks-QTD-P2554'])} />
       </div>
+      <div className="col-sm-4">
+        <CableRankerList telecastData={getData('ASCO-Ranks-QTD-M2554')} isFetching={totalFetching(['ASCO-Ranks-QTD-M2554'])} />
+      </div>
+      <div className="col-sm-4">
+        <CableRankerList telecastData={getData('ASCO-Ranks-QTD-W2554')} isFetching={totalFetching(['ASCO-Ranks-QTD-W2554'])} />
+      </div>
+    </div>
+</div>
+
     )
   }
 }
