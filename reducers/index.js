@@ -160,7 +160,7 @@ function weeks(state={weeks:[]}, action){
 */
 
 
-function dates(state={}, action){
+function dates(state={Qtd:{}, Ytd: {}, Week: {}}, action){
   switch(action.type){
     case RECEIVE_DATES:
       return Object.assign({}, state, {

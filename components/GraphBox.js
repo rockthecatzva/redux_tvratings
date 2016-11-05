@@ -68,7 +68,7 @@ export default class GraphBox extends Component {
 
         xAxis.ticks(data.graphData[maxset].length)
         xAxis.tickFormat(function (d, i) {
-            if(i%4) return xlabels[i];
+            if(i%4==0) return xlabels[i];
             return "";
         })
         // Add the x-axis.

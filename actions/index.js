@@ -105,10 +105,13 @@ function fetchPosts(reddit) {
 */
 
 
+const finalUrl = "http://dctrydatrk01.discovery.com/api/"
+//const finalUrl = "http://localhost:8888/api-tvratings-phpslim/"
+
 export function fetchNets() {
   return dispatch => {
    // dispatch(requestNets)
-    return fetch('http://localhost:8888/api-tvratings-phpslim/getnets')
+    return fetch(finalUrl+'/getnets')
       .then(response => response.json())
       .then(json => dispatch(receiveNets(json)))
   }
@@ -117,7 +120,7 @@ export function fetchNets() {
 export function fetchWeeks() {
   return dispatch => {
     //dispatch(requestWeeks)
-    return fetch('http://localhost:8888/api-tvratings-phpslim/getweeks')
+    return fetch(finalUrl+'/getweeks')
       .then(response => response.json())
       .then(json => dispatch(receiveWeeks(json)))
   }
@@ -126,7 +129,7 @@ export function fetchWeeks() {
 export function fetchDates(period, endpoint) {
   return dispatch => {
     //dispatch(requestWeeks)
-    return fetch('http://localhost:8888/api-tvratings-phpslim/time.php/'+endpoint)
+    return fetch(finalUrl+'/time.php/'+endpoint)
       .then(response => response.json())
       .then(json => dispatch(receiveDates(json, period, endpoint)))
   }

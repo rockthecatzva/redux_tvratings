@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom'
 var Loader = require('halogen/PulseLoader');
 var d3 = require('d3')
 
-const MARGIN = 30
+const MARGIN = 40
 //IS THIS STATE???
 var width, height = 0
 
@@ -28,7 +28,7 @@ export default class BarsStartStop extends Component {
 			//height = height - margin.top - margin.bottom
 
 			var x = d3.scaleBand()
-			.range([0, width]);
+			.range([0, (width-MARGIN)]);
 
 			var y = d3.scaleLinear()
 			.range([height-(MARGIN*2), 0]);
@@ -118,8 +118,19 @@ export default class BarsStartStop extends Component {
 			*/
 
 			bar.append("text")
-			.attr("x", 0)//Math.floor(x.bandwidth()/2)
-			.attr("y", function(d) { return y(d.cur_rating)+14; })
+			.attr("x", Math.floor(barw/2))//Math.floor(x.bandwidth()/2)
+			.attr("y", function(d) {
+        let label_padding = 4;
+        let fontheight = 9;
+        if(parseFloat(d.cur_rating)>parseFloat(d.yago_rating)){
+          return y(d.cur_rating)-label_padding;
+        }
+        else{
+          return y(d.cur_rating)+label_padding+fontheight;
+        }
+
+
+        })
 			.attr("class", "graph-label")
 			.text(function(d) { return Math.round(d.cur_rating);});
 
@@ -151,7 +162,7 @@ export default class BarsStartStop extends Component {
     render() {
         const {barData, isFetching} = this.props
 
-        //console.log("Rendering the graph", spin, this.spin, this.props.showSpinner)
+        console.log("Rendering the graph", isFetching)
 
         return (
             <div className={"graph-box panel-body"}>

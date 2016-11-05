@@ -31,39 +31,49 @@ export default class TelecastRankerBox extends Component {
         </div>
       }
 
-      <Table sortable={true} data={telecastData} sortable={false} defaultSort={{column: 'aa-l3d-p25_54', direction: 'desc'}} >
+      <Table sortable={true} sortable={false} defaultSort={{column: 'aa-l3d-p25_54', direction: 'desc'}} >
+
+
       <Thead>
 
 
-      <Th className="rating-header" column="concat_name">
-      Program Name
-      </Th>
+
+        <Th className="table-header text-left" column="concat_name">
+        Program Name
+        </Th>
 
 
-      <Th className="rating-header" column="dow">
-      Day
-      </Th>
+        <Th className="table-header" column="dow">
+        Day
+        </Th>
 
-      <Th className="rating-header" column="aa-l3d-p25_54">
-      P25-54
-      </Th>
-      <Th className="rating-header" column="aa-l3d-m25_54">
-      M25-54
-      </Th>
-      <Th className="rating-header" column="aa-l3d-w25_54">
-      W25-54
-      </Th>
+        <Th className="table-header" column="aa-l3d-p25_54">
+        P25-54
+        </Th>
+        <Th className="table-header" column="aa-l3d-m25_54">
+        M25-54
+        </Th>
+        <Th className="table-header" column="aa-l3d-w25_54">
+        W25-54
+        </Th>
 
 
       </Thead>
 
-      <Tr>
-        <Td column="concat_name"> </Td>
-        <Td column="dow"> </Td>
-        <Td column="aa-l3d-p25_54" className="data-col"><div className="data-col"></div></Td>
-        <Td column="aa-l3d-m25_54" className="data-col" style={{textAlign: "center"}}> </Td>
-        <Td column="aa-l3d-w25_54" className="data-col"> </Td>
-      </Tr>
+
+      {telecastData.map(function(row){
+        return(
+          <Tr>
+            <Td column="concat_name">{row["concat_name"]}</Td>
+            <Td column="dow" className="text-center">{row["dow"]}</Td>
+            <Td column="aa-l3d-p25_54" className="text-center">{row["aa-l3d-p25_54"]}</Td>
+            <Td column="aa-l3d-m25_54" className="text-center">{row["aa-l3d-m25_54"]}</Td>
+            <Td column="aa-l3d-w25_54" className="text-center">{row["aa-l3d-w25_54"]}</Td>
+          </Tr>
+          )
+        })
+      }
+
 
 
       </Table>
