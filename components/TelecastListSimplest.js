@@ -11,7 +11,7 @@ var Td = Reactable.Td;
 var Loader = require('halogen/PulseLoader');
 
 
-export default class TelecastRankerBox extends Component {
+export default class TelecastListSimplest extends Component {
 
   componentWillReceiveProps(nextprop){
   }
@@ -61,18 +61,29 @@ export default class TelecastRankerBox extends Component {
       </Thead>
 
 
-      {telecastData.map(function(row){
-        return(
-          <Tr>
-            <Td column="concat_name">{row["concat_name"]}</Td>
-            <Td column="dow" className="text-center">{row["dow"]}</Td>
-            <Td column="aa-l3d-p25_54" className="text-center">{row["aa-l3d-p25_54"]}</Td>
-            <Td column="aa-l3d-m25_54" className="text-center">{row["aa-l3d-m25_54"]}</Td>
-            <Td column="aa-l3d-w25_54" className="text-center">{row["aa-l3d-w25_54"]}</Td>
-          </Tr>
-          )
-        })
-      }
+
+
+
+          {telecastData.map(function(row, i){
+            return(
+              <Tr key={i}>
+                <Td column="concat_name">{row["concat_name"]}</Td>
+                <Td column="dow" className="text-center">{row["dow"]}</Td>
+                <Td column="aa-l3d-p25_54" className="text-center">{row["aa-l3d-p25_54"]}</Td>
+                <Td column="aa-l3d-m25_54" className="text-center">{row["aa-l3d-m25_54"]}</Td>
+                <Td column="aa-l3d-w25_54" className="text-center">{row["aa-l3d-w25_54"]}</Td>
+              </Tr>
+              )
+            })
+          }
+
+      
+
+
+
+
+
+
 
 
 
@@ -85,7 +96,7 @@ export default class TelecastRankerBox extends Component {
   }
 }
 
-TelecastRankerBox.propTypes = {
+TelecastListSimplest.propTypes = {
   telecastData: PropTypes.array.isRequired,
   isFetching: PropTypes.bool.isRequired,
   columnList: PropTypes.array.isRequired

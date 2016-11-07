@@ -29,7 +29,7 @@ export default class CableRankerList extends Component {
 
         {telecastData &&
           <tbody>
-            {telecastData.map(function(row){
+            {telecastData.map(function(row, i){
               var chg = row.yago_rank-row.curr_rank
               //console.log("Are null?", row.yago_rank, row.curr_rank)
               var cl = (chg>0?"green":"red")
@@ -39,7 +39,7 @@ export default class CableRankerList extends Component {
               }
 
               return (
-                <tr>
+                <tr key={i}>
                   <td className="text-left">{row.curr_rank}</td>
                   <td className={"rank-change "+cl} >{chg}</td>
                   <td className="text-left">{row.net}</td>

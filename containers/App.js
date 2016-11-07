@@ -9,6 +9,7 @@ import TelecastListSimplest from '../components/TelecastListSimplest'
 import CableRankerList from '../components/CableRankerList'
 
 //const tmpUrl =
+//const finalUrl  = "http://localhost/api-tvratings-phpslim/"//"http://dctrydatrk01.discovery.com/api/"
 const finalUrl  = "http://dctrydatrk01.discovery.com/api/"
 //const tempUrl= "http://localhost:8888/api-tvratings-phpslim/"
 
@@ -117,7 +118,8 @@ class App extends Component {
         return ratings[dataname]["data"];
       }
       else{
-        return [0];
+        let arr = [];
+        return arr;
       }
     }
 
@@ -125,13 +127,25 @@ class App extends Component {
       var isFetching = false;
 
       for (var set in nameset) {
-        //console.log(set, ratings[nameset[set]], nameset, nameset[set], ratings[nameset[set]])
-        if(!ratings[nameset[set]]){
+        console.log(set, ratings[nameset[set]])
+        if(ratings[nameset[set]]){
+          console.log("its a valid object now", set, ratings[nameset[set]])
+          if(ratings[nameset[set]]["isFetching"]){
+            isFetching = true
+            break
+          }
+
+        }
+        else{
           isFetching = true
           break
         }
       }
 
+      if(!isFetching)
+      {
+        console.log("FETCHING COMPLETE~~~~");
+      }
       return isFetching;
     }
 

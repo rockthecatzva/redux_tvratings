@@ -106,7 +106,7 @@ function fetchPosts(reddit) {
 
 
 const finalUrl = "http://dctrydatrk01.discovery.com/api/"
-//const finalUrl = "http://localhost:8888/api-tvratings-phpslim/"
+//const finalUrl = "http://localhost/api-tvratings-phpslim/"
 
 export function fetchNets() {
   return dispatch => {

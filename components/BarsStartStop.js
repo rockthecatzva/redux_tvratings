@@ -162,7 +162,7 @@ export default class BarsStartStop extends Component {
     render() {
         const {barData, isFetching} = this.props
 
-        console.log("Rendering the graph", isFetching)
+        console.log("Rendering the graph", barData, isFetching)
 
         return (
             <div className={"graph-box panel-body"}>

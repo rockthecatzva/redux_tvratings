@@ -45,7 +45,7 @@ function ratings(state={}, action){
     case REQUEST_DATA:
       return Object.assign({}, state, {
         [action.treeparent]: {
-          "data": 0,
+          "data": [],
           "isFetching": true}
       })
     case RECEIVE_DATA:
