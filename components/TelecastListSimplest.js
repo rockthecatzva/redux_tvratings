@@ -43,17 +43,17 @@ export default class TelecastListSimplest extends Component {
         </Th>
 
 
-        <Th className="table-header" column="dow">
+        <Th className="table-header text-left" column="dow">
         Day
         </Th>
 
-        <Th className="table-header" column="aa-l3d-p25_54">
+        <Th className="table-header text-right" column="aa-l3d-p25_54">
         P25-54
         </Th>
-        <Th className="table-header" column="aa-l3d-m25_54">
+        <Th className="table-header text-right" column="aa-l3d-m25_54">
         M25-54
         </Th>
-        <Th className="table-header" column="aa-l3d-w25_54">
+        <Th className="table-header text-right" column="aa-l3d-w25_54">
         W25-54
         </Th>
 
@@ -68,16 +68,16 @@ export default class TelecastListSimplest extends Component {
             return(
               <Tr key={i}>
                 <Td column="concat_name">{row["concat_name"]}</Td>
-                <Td column="dow" className="text-center">{row["dow"]}</Td>
-                <Td column="aa-l3d-p25_54" className="text-center">{row["aa-l3d-p25_54"]}</Td>
-                <Td column="aa-l3d-m25_54" className="text-center">{row["aa-l3d-m25_54"]}</Td>
-                <Td column="aa-l3d-w25_54" className="text-center">{row["aa-l3d-w25_54"]}</Td>
+                <Td column="dow" className="text-left">{row["dow"]}</Td>
+                <Td column="aa-l3d-p25_54" className="text-right">{row["aa-l3d-p25_54"]}</Td>
+                <Td column="aa-l3d-m25_54" className="text-right">{row["aa-l3d-m25_54"]}</Td>
+                <Td column="aa-l3d-w25_54" className="text-right">{row["aa-l3d-w25_54"]}</Td>
               </Tr>
               )
             })
           }
 
-      
+
 
 
 

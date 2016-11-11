@@ -16,13 +16,13 @@ export default class CableRankerList extends Component {
           </div>
         }
 
-        <table>
+        <table className="fadetext">
           <thead>
             <tr>
-              <th className="text-left small-col table-header">Rank</th>
+              <th className="text-right small-col table-header">Rank</th>
               <th className="text-center small-col table-header">&#916;</th>
               <th className="text-left med-col table-header">Network</th>
-              <th className="text-right med-col table-header">{colName}</th>
+              <th className="text-right lrg-col table-header">{colName}</th>
             </tr>
           </thead>
 
@@ -40,10 +40,10 @@ export default class CableRankerList extends Component {
 
               return (
                 <tr key={i}>
-                  <td className="text-left">{row.curr_rank}</td>
+                  <td className="text-right rank lowtrans">{row.curr_rank}</td>
                   <td className={"rank-change "+cl} >{chg}</td>
-                  <td className="text-left">{row.net}</td>
-                  <td className="text-right">{row.curr_rating}</td>
+                  <td className={"text-left "+(row.net.trim())+"-txtlabel lowtrans"}>{row.net}</td>
+                  <td className={"text-right lowtrans "+(row.net.trim())+"-txtlabel"}>{row.curr_rating}</td>
                 </tr>
               )
             })}

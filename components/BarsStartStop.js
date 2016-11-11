@@ -79,7 +79,7 @@ export default class BarsStartStop extends Component {
 			var ticks = el.select(".xaxis").selectAll(".tick")
                     .data(data)
                     .append("svg:image")
-                    .attr("xlink:href", function (d) { return "./img/"+d.net.trim()+"-logo.jpg" ; })
+                    .attr("xlink:href", function (d) { return "./img/"+d.net.trim()+"-logo.png" ; })
 										//.attr("class", "graph-label")
 										.attr("y", 2)
 										.attr("x", -30)
